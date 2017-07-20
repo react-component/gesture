@@ -41,13 +41,15 @@ class Demo extends Component<any, any> {
           <Gesture
             onTap={this.log('onTap')}
             onPress={this.log('onPress')}
+            onDoubleTap={this.log('onDoubleTap')}
             onPressUp={this.log('onPressUp')}
             onSwipe={this.log('onSwipe', ['angle', 'direction'])}
             onSwipeLeft = {this.log('onSwipeLeft', ['angle', 'direction'])}
             onSwipeRight = {this.log('onSwipeRight', ['angle', 'direction'])}
             onSwipeUp = {this.log('onSwipeUp', ['angle', 'direction'])}
             onSwipeDown = {this.log('onSwipeDown', ['angle', 'direction'])}
-            onDoubleTap={this.log('onDoubleTap')}
+            onSwipeCancel = {this.log('onSwipeCancel', ['angle', 'direction'])}
+            onPan={this.log('onPan')}
             onPanStart={this.log('onPanStart')}
           >
             <div className="inner">

@@ -15,19 +15,25 @@ export interface IGesture {
   enablePinch?: boolean;
 
   // pinch: s.zoom
+  onPinch?: (s: IGestureStauts, e: object) => {};
   onPinchStart?: (s: IGestureStauts, e: object) => {};
   onPinchMove?: (s: IGestureStauts, e: object) => {};
   onPinchEnd?: (s: IGestureStauts, e: object) => {};
+  onPinchCancel?: (s: IGestureStauts, e: object) => {};
 
   // rotate: s.angle
+  onRotate?: (s: IGestureStauts, e: object) => {};
   onRotateStart?: (s: IGestureStauts, e: object) => {};
   onRotateMove?: (s: IGestureStauts, e: object) => {};
   onRotateEnd?: (s: IGestureStauts, e: object) => {};
+  onRotateCancel?: (s: IGestureStauts, e: object) => {};
 
   // pan: s.delta
+  onPan?: (s: IGestureStauts, e: object) => {};
   onPanStart?: (s: IGestureStauts, e: object) => {};
   onPanMove?: (s: IGestureStauts, e: object) => {};
   onPanEnd?: (s: IGestureStauts, e: object) => {};
+  onPanCancel?: (s: IGestureStauts, e: object) => {};
 
   // tap
   onTap?: (s: IGestureStauts, e: object) => {};
