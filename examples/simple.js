@@ -9774,8 +9774,14 @@ var Demo = function (_Component) {
                 var extInfo = keys ? keys.map(function (key) {
                     return key + ' = ' + args[0][key];
                 }).join(', ') : '';
-                _this.refs.log.innerHTML += '<p>' + type + ': ' + extInfo + ' time = ' + Date.now() + '</p>';
+                _this.refs.log.innerHTML += '<p>' + type + ': ' + extInfo + '</p>';
                 _this.refs.log.scrollTop = _this.refs.log.scrollHeight;
+                if (type === 'onPinch') {
+                    var scale = args[0].scale;
+
+                    _this.rootNode = __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.findDOMNode(_this.root);
+                    _this.rootNode.style.transform = 'scale(' + scale + ')';
+                }
             };
         };
         return _this;
@@ -9784,7 +9790,11 @@ var Demo = function (_Component) {
     _createClass(Demo, [{
         key: 'render',
         value: function render() {
-            return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__src_index__["a" /* default */], { onTap: this.log('onTap'), onPress: this.log('onPress'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['angle', 'direction']), onSwipeLeft: this.log('onSwipeLeft', ['angle', 'direction']), onSwipeRight: this.log('onSwipeRight', ['angle', 'direction']), onSwipeUp: this.log('onSwipeUp', ['angle', 'direction']), onSwipeDown: this.log('onSwipeDown', ['angle', 'direction']), onDoubleTap: this.log('onDoubleTap'), onPanStart: this.log('onPanStart') }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "inner" }))));
+            var _this2 = this;
+
+            return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__src_index__["a" /* default */], { enablePinch: true, onTap: this.log('onTap'), onPress: this.log('onPress'), onDoubleTap: this.log('onDoubleTap'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['angle', 'direction']), onSwipeLeft: this.log('onSwipeLeft', ['angle', 'direction']), onSwipeRight: this.log('onSwipeRight', ['angle', 'direction']), onSwipeUp: this.log('onSwipeUp', ['angle', 'direction']), onSwipeDown: this.log('onSwipeDown', ['angle', 'direction']), onSwipeCancel: this.log('onSwipeCancel', ['angle', 'direction']), onPan: this.log('onPan'), onPanStart: this.log('onPanStart'), onPinch: this.log('onPinch', ['pinchLen', 'scale']), onPinchStart: this.log('onPinchStart', ['pinchLen', 'scale']), onPinchMove: this.log('onPinchMove', ['pinchLen', 'scale']), onPinchEnd: this.log('onPinchEnd', ['pinchLen', 'scale']), onPinchCancel: this.log('onPinchCancel', ['pinchLen', 'scale']) }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "inner", ref: function ref(el) {
+                    _this2.root = el;
+                } }))));
         }
     }]);
 
@@ -9837,6 +9847,17 @@ var Gesture = function (_Component) {
                 cb.apply(undefined, [_this.getGestureState()].concat(args));
             }
         };
+        _this.callCombineEvent = function (mainEventName, eventStatus) {
+            for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+                args[_key2 - 2] = arguments[_key2];
+            }
+
+            _this.callEvent.apply(_this, [mainEventName].concat(args));
+            if (eventStatus) {
+                var subEventName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* getEventName */])(mainEventName, eventStatus);
+                _this.callEvent.apply(_this, [subEventName].concat(args));
+            }
+        };
         _this.updateGestureStatus = function (e) {
             var _this$gesture = _this.gesture,
                 startTime = _this$gesture.startTime,
@@ -9846,11 +9867,11 @@ var Gesture = function (_Component) {
                 pageX = _e$touches$.pageX,
                 pageY = _e$touches$.pageY;
 
-            var nowTime = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* now */])();
+            var nowTime = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* now */])();
             var deltaTime = nowTime - startTime;
             var deltaX = pageX - startX;
             var deltaY = pageY - startY;
-            var delta = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* calcTriangleDistance */])(deltaX, deltaY);
+            var delta = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* calcTriangleDistance */])(deltaX, deltaY);
             var velocity = delta / deltaTime;
             _this.setGestureState({
                 /* update status snapshot */
@@ -9871,7 +9892,7 @@ var Gesture = function (_Component) {
                 _this.setGestureState({
                     press: true
                 });
-                _this.callEvent('onPress', e);
+                _this.callEvent('onPress');
             }, __WEBPACK_IMPORTED_MODULE_2__config__["a" /* PRESS */].time);
         };
         _this.cancerPressTimer = function () {
@@ -9893,24 +9914,16 @@ var Gesture = function (_Component) {
             }
         };
         _this.cleanGestureState = function () {
-            _this.cleanGestureTimer = setTimeout(function () {
-                console.log('clean gesture state');
-                delete _this.gesture;
-            }, 0);
-        };
-        _this.fixWrongTick = function () {
-            // this happend in ios, when you double click, why ?
-            _this.cleanGestureTimer && clearTimeout(_this.cleanGestureTimer);
+            console.log('clean gesture state');
             delete _this.gesture;
         };
         _this.initGestureStatus = function (e) {
-            _this.fixWrongTick();
             // store the gesture state
             var _e$touches$2 = e.touches[0],
                 pageX = _e$touches$2.pageX,
                 pageY = _e$touches$2.pageY;
 
-            var nowTime = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* now */])();
+            var nowTime = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* now */])();
             _this.setGestureState({
                 /* start status */
                 startTime: nowTime,
@@ -9934,25 +9947,28 @@ var Gesture = function (_Component) {
                     x = _this$gesture2.x,
                     y = _this$gesture2.y;
 
-                var doubleTap = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* shouldTriggerDoubleTap */])(time - startTime, x - startX, y - startY);
+                var doubleTap = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["d" /* shouldTriggerDoubleTap */])(time - startTime, x - startX, y - startY);
                 _this.setGestureState({
                     doubleTap: doubleTap
                 });
             }
         };
         _this._handleTouchStart = function (e) {
-            console.log('touchstart', e.touches);
+            console.log('touchstart');
             // in case touchmove just trigger once
             e.preventDefault();
-            e.persist();
             _this.initGestureStatus(e);
             _this.doDoubleTap();
             _this.startMultiTouch(e);
             _this.startPressTimer(e);
         };
         _this._handleTouchMove = function (e) {
-            console.log('touchmove', e.touches);
-            e.persist();
+            console.log('touchmove');
+            if (!_this.gesture) {
+                // sometimes: touchstart -> touchmove.... --> touchend --> touchmove --> touchend
+                // so we need to skip the unnormal event cycle after touchend
+                return;
+            }
             // not a long press
             _this.cancerPressTimer();
             // not a double click
@@ -9963,7 +9979,10 @@ var Gesture = function (_Component) {
             _this.doMultiTouch(e, 'move');
         };
         _this._handleTouchEnd = function (e) {
-            console.log('touchend', e.touches);
+            console.log('touchend');
+            if (!_this.gesture) {
+                return;
+            }
             _this.cancerPressTimer();
             _this.doMultiTouch(e, 'end');
             _this.doTapOrSwipe(e);
@@ -9971,7 +9990,10 @@ var Gesture = function (_Component) {
         };
         _this._handleTouchCancel = function (e) {
             // only if no touchMove, touchEnd, and prevent default, propgation in touchStart
-            console.log('touchcancel', e.touches);
+            console.log('touchcancel');
+            if (!_this.gesture) {
+                return;
+            }
             _this.cancerPressTimer();
             _this.updateGestureStatus(e);
             _this.doMultiTouch(e, 'cancel');
@@ -9984,23 +10006,27 @@ var Gesture = function (_Component) {
 
             if (e.touches.length > 1 && (enablePinch || enableRotate)) {
                 if (enablePinch) {
-                    var _calcLenFromTouch = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["d" /* calcLenFromTouch */])(e.touches),
+                    var _calcLenFromTouch = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["e" /* calcLenFromTouch */])(e.touches),
                         pinchStartLenX = _calcLenFromTouch.x,
                         pinchStartLenY = _calcLenFromTouch.y,
                         pinchStartLen = _calcLenFromTouch.z;
 
                     _this.setGestureState({
+                        pinch: true,
+                        pinchLen: pinchStartLen,
                         pinchStartLenX: pinchStartLenX,
                         pinchStartLenY: pinchStartLenY,
-                        pinchStartLen: pinchStartLen
+                        pinchStartLen: pinchStartLen,
+                        scale: 1
                     });
-                    _this.callEvent('onPinchStart', e);
+                    _this.callCombineEvent('onPinch', 'start');
                 }
                 if (enableRotate) {
                     _this.setGestureState({
+                        rotate: true,
                         rotation: 0
                     });
-                    _this.callEvent('onRotateStart', e);
+                    _this.callCombineEvent('onRotate', 'start');
                 }
             }
         };
@@ -10011,40 +10037,52 @@ var Gesture = function (_Component) {
             var _this$gesture3 = _this.gesture,
                 pinchStartLen = _this$gesture3.pinchStartLen,
                 pinchStartLenX = _this$gesture3.pinchStartLenX,
-                pinchStartLenY = _this$gesture3.pinchStartLenY;
+                pinchStartLenY = _this$gesture3.pinchStartLenY,
+                pinch = _this$gesture3.pinch,
+                rotate = _this$gesture3.rotate;
 
-            if (e.touches.length > 1 && (enablePinch || enableRotate)) {
-                var _calcLenFromTouch2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["d" /* calcLenFromTouch */])(e.touches),
-                    pinchLenX = _calcLenFromTouch2.x,
-                    pinchLenY = _calcLenFromTouch2.y,
-                    pinchLen = _calcLenFromTouch2.z;
+            if (enablePinch || enableRotate) {
+                if (e.touches.length > 1) {
+                    var _calcLenFromTouch2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["e" /* calcLenFromTouch */])(e.touches),
+                        pinchLenX = _calcLenFromTouch2.x,
+                        pinchLenY = _calcLenFromTouch2.y,
+                        pinchLen = _calcLenFromTouch2.z;
 
-                _this.setGestureState({
-                    pinchLen: pinchLen,
-                    pinchLenX: pinchLenX,
-                    pinchLenY: pinchLenY
-                });
-                if (enablePinch) {
-                    var scale = pinchLen / pinchStartLen;
                     _this.setGestureState({
-                        scale: scale
+                        pinchLen: pinchLen,
+                        pinchLenX: pinchLenX,
+                        pinchLenY: pinchLenY
                     });
-                    _this.callEvent(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["e" /* getEventName */])('onPinch', status), e);
+                    if (enablePinch) {
+                        var scale = pinchLen / pinchStartLen;
+                        _this.setGestureState({
+                            scale: scale
+                        });
+                        _this.callCombineEvent('onPinch', status);
+                    }
+                    if (enableRotate) {
+                        var rotation = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["f" /* calcRotation */])({
+                            x: pinchLenX,
+                            y: pinchLenY,
+                            z: pinchLen
+                        }, {
+                            x: pinchStartLenX,
+                            y: pinchStartLenY,
+                            z: pinchStartLen
+                        });
+                        _this.setGestureState({
+                            rotation: rotation
+                        });
+                        _this.callCombineEvent('onRotate', status);
+                    }
                 }
-                if (enableRotate) {
-                    var rotation = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["f" /* calcRotation */])({
-                        x: pinchLenX,
-                        y: pinchLenY,
-                        z: pinchLen
-                    }, {
-                        x: pinchStartLenX,
-                        y: pinchStartLenY,
-                        z: pinchStartLen
-                    });
-                    _this.setGestureState({
-                        rotation: rotation
-                    });
-                    _this.callEvent(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["e" /* getEventName */])('onRotate', status), e);
+                if (status === 'end') {
+                    if (pinch) {
+                        _this.callCombineEvent('onPinch', status);
+                    }
+                    if (rotate) {
+                        _this.callCombineEvent('onRotate', status);
+                    }
                 }
             }
         };
@@ -10058,8 +10096,13 @@ var Gesture = function (_Component) {
                 startX = _this$gesture4.startX,
                 startY = _this$gesture4.startY,
                 deltaX = _this$gesture4.deltaX,
-                deltaY = _this$gesture4.deltaY;
+                deltaY = _this$gesture4.deltaY,
+                pinch = _this$gesture4.pinch,
+                rotate = _this$gesture4.rotate;
 
+            if (pinch || rotate) {
+                return;
+            }
             var swipe = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["g" /* shouldTriggerSwipe */])(delta, velocity);
             var direction = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["h" /* getDirection */])(deltaX, deltaY);
             _this.setGestureState({
@@ -10096,8 +10139,7 @@ var Gesture = function (_Component) {
                 angle: angle,
                 direction: direction
             });
-            _this.callEvent('onSwipe', e);
-            _this.callEvent(eventName, e);
+            _this.callCombineEvent('onSwipe', eventName);
         };
         return _this;
     }
@@ -10138,14 +10180,14 @@ Gesture.defaultProps = {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = now;
-/* harmony export (immutable) */ __webpack_exports__["b"] = calcTriangleDistance;
-/* harmony export (immutable) */ __webpack_exports__["d"] = calcLenFromTouch;
+/* harmony export (immutable) */ __webpack_exports__["b"] = now;
+/* harmony export (immutable) */ __webpack_exports__["c"] = calcTriangleDistance;
+/* harmony export (immutable) */ __webpack_exports__["e"] = calcLenFromTouch;
 /* harmony export (immutable) */ __webpack_exports__["f"] = calcRotation;
-/* harmony export (immutable) */ __webpack_exports__["e"] = getEventName;
+/* harmony export (immutable) */ __webpack_exports__["a"] = getEventName;
 /* unused harmony export isInTapDelay */
 /* unused harmony export isInTapArea */
-/* harmony export (immutable) */ __webpack_exports__["c"] = shouldTriggerDoubleTap;
+/* harmony export (immutable) */ __webpack_exports__["d"] = shouldTriggerDoubleTap;
 /* harmony export (immutable) */ __webpack_exports__["g"] = shouldTriggerSwipe;
 /* harmony export (immutable) */ __webpack_exports__["i"] = calcSwipeAngle;
 /* harmony export (immutable) */ __webpack_exports__["h"] = getDirection;
@@ -10229,16 +10271,16 @@ function getDirectionEventName(direction) {
         case __WEBPACK_IMPORTED_MODULE_0__config__["d" /* DIRECTION_NONE */]:
             break;
         case __WEBPACK_IMPORTED_MODULE_0__config__["e" /* DIRECTION_LEFT */]:
-            name = 'onSwipeLeft';
+            name = 'left';
             break;
         case __WEBPACK_IMPORTED_MODULE_0__config__["f" /* DIRECTION_RIGHT */]:
-            name = 'onSwipeRight';
+            name = 'right';
             break;
         case __WEBPACK_IMPORTED_MODULE_0__config__["g" /* DIRECTION_UP */]:
-            name = 'onSwipeUp';
+            name = 'up';
             break;
         case __WEBPACK_IMPORTED_MODULE_0__config__["h" /* DIRECTION_DOWN */]:
-            name = 'onSwipeDown';
+            name = 'down';
             break;
         default:
     }

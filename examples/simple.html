@@ -300,8 +300,13 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
   log = (type, keys) =&gt; (...args) =&gt; {
     <span class="hljs-built_in">console</span>.log(type, ...args);
     <span class="hljs-keyword">const</span> extInfo = keys ? keys.map(key =&gt; <span class="hljs-string">`<span class="hljs-subst">${key}</span> = <span class="hljs-subst">${args[0][key]}</span>`</span>).join(<span class="hljs-string">', '</span>) : <span class="hljs-string">''</span>;
-    <span class="hljs-keyword">this</span>.refs.log.innerHTML += <span class="hljs-string">`&lt;p&gt;<span class="hljs-subst">${type}</span>: <span class="hljs-subst">${extInfo}</span> time = <span class="hljs-subst">${Date.now()}</span>&lt;/p&gt;`</span>;
+    <span class="hljs-keyword">this</span>.refs.log.innerHTML += <span class="hljs-string">`&lt;p&gt;<span class="hljs-subst">${type}</span>: <span class="hljs-subst">${extInfo}</span>&lt;/p&gt;`</span>;
     <span class="hljs-keyword">this</span>.refs.log.scrollTop = <span class="hljs-keyword">this</span>.refs.log.scrollHeight;
+    <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'onPinch'</span>) {
+      <span class="hljs-keyword">const</span> { scale } = args[<span class="hljs-number">0</span>];
+      <span class="hljs-keyword">this</span>.rootNode = ReactDOM.findDOMNode(<span class="hljs-keyword">this</span>.root);
+      <span class="hljs-keyword">this</span>.rootNode.style.transform = <span class="hljs-string">`scale(<span class="hljs-subst">${scale}</span>)`</span>;
+    }
   }
   render() {
     <span class="hljs-keyword">return</span> (
@@ -310,18 +315,26 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
         &lt;<span class="hljs-tag">div</span> <span class="hljs-tag">ref</span>="<span class="hljs-tag">log</span>" <span class="hljs-tag">style</span>=<span class="hljs-rules">{{<span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">100</span>, overflow: <span class="hljs-string">'auto'</span>, margin: <span class="hljs-number">10</span></span></span></span>}}/&gt;
         &lt;<span class="hljs-tag">div</span> <span class="hljs-tag">className</span>="<span class="hljs-tag">outter</span>"&gt;
           &lt;<span class="hljs-tag">Gesture</span>
+            <span class="hljs-tag">enablePinch</span>
             <span class="hljs-tag">onTap</span>=<span class="hljs-rules">{this.log('onTap')}</span>
             <span class="hljs-tag">onPress</span>=<span class="hljs-rules">{this.log('onPress')}</span>
+            <span class="hljs-tag">onDoubleTap</span>=<span class="hljs-rules">{this.log('onDoubleTap')}</span>
             <span class="hljs-tag">onPressUp</span>=<span class="hljs-rules">{this.log('onPressUp')}</span>
             <span class="hljs-tag">onSwipe</span>=<span class="hljs-rules">{this.log('onSwipe', ['angle', 'direction'])}</span>
             <span class="hljs-tag">onSwipeLeft</span> = <span class="hljs-rules">{this.log('onSwipeLeft', ['angle', 'direction'])}</span>
             <span class="hljs-tag">onSwipeRight</span> = <span class="hljs-rules">{this.log('onSwipeRight', ['angle', 'direction'])}</span>
             <span class="hljs-tag">onSwipeUp</span> = <span class="hljs-rules">{this.log('onSwipeUp', ['angle', 'direction'])}</span>
             <span class="hljs-tag">onSwipeDown</span> = <span class="hljs-rules">{this.log('onSwipeDown', ['angle', 'direction'])}</span>
-            <span class="hljs-tag">onDoubleTap</span>=<span class="hljs-rules">{this.log('onDoubleTap')}</span>
+            <span class="hljs-tag">onSwipeCancel</span> = <span class="hljs-rules">{this.log('onSwipeCancel', ['angle', 'direction'])}</span>
+            <span class="hljs-tag">onPan</span>=<span class="hljs-rules">{this.log('onPan')}</span>
             <span class="hljs-tag">onPanStart</span>=<span class="hljs-rules">{this.log('onPanStart')}</span>
+            <span class="hljs-tag">onPinch</span>=<span class="hljs-rules">{this.log('onPinch', ['pinchLen', 'scale'])}</span>
+            <span class="hljs-tag">onPinchStart</span>=<span class="hljs-rules">{this.log('onPinchStart', ['pinchLen', 'scale'])}</span>
+            <span class="hljs-tag">onPinchMove</span>=<span class="hljs-rules">{this.log('onPinchMove', ['pinchLen', 'scale'])}</span>
+            <span class="hljs-tag">onPinchEnd</span>=<span class="hljs-rules">{this.log('onPinchEnd', ['pinchLen', 'scale'])}</span>
+            <span class="hljs-tag">onPinchCancel</span>=<span class="hljs-rules">{this.log('onPinchCancel', ['pinchLen', 'scale'])}</span>
           &gt;
-            &lt;<span class="hljs-tag">div</span> <span class="hljs-tag">className</span>="<span class="hljs-tag">inner</span>"&gt;
+            &lt;<span class="hljs-tag">div</span> <span class="hljs-tag">className</span>="<span class="hljs-tag">inner</span>" <span class="hljs-tag">ref</span>=<span class="hljs-rules">{(el) =&gt; { this.root = el; }</span>}&gt;
             &lt;/<span class="hljs-tag">div</span>&gt;
           &lt;/<span class="hljs-tag">Gesture</span>&gt;
         &lt;/<span class="hljs-tag">div</span>&gt;

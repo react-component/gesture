@@ -761,7 +761,236 @@
 <a href="http://nodejs.org/download/" title="null"><img src="https://img.shields.io/badge/node.js-%3E=_0.10-green.svg?style=flat-square" alt="node version"></a>
 <a href="https://npmjs.org/package/rc-gesture" title="null"><img src="https://img.shields.io/npm/dm/rc-gesture.svg?style=flat-square" alt="npm download"></a></p>
 <h2>Screenshots<a id="user-content-screenshots" name="screenshots" class="anchor" aria-hidden="true" href="#screenshots"><span class="octicon octicon-link"></span></a></h2><h2>Features<a id="user-content-features" name="features" class="anchor" aria-hidden="true" href="#features"><span class="octicon octicon-link"></span></a></h2><h2>Install<a id="user-content-install" name="install" class="anchor" aria-hidden="true" href="#install"><span class="octicon octicon-link"></span></a></h2><div class="highlight"><pre><code language="bash">npm install --save rc-gesture</code></pre></div><p><a href="https://npmjs.org/package/rc-gesture" title="null"><img src="https://nodei.co/npm/rc-gesture.png" alt="rc-gesture"></a></p>
-<h2>Usage<a id="user-content-usage" name="usage" class="anchor" aria-hidden="true" href="#usage"><span class="octicon octicon-link"></span></a></h2><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><h2>Development<a id="user-content-development" name="development" class="anchor" aria-hidden="true" href="#development"><span class="octicon octicon-link"></span></a></h2><div class="highlight"><pre><code language="undefined">npm install
+<h2>Usage<a id="user-content-usage" name="usage" class="anchor" aria-hidden="true" href="#usage"><span class="octicon octicon-link"></span></a></h2><div class="highlight"><pre><code language="xml">import Gesture from 'rc-gesture';
+
+ReactDOM.render(
+  <span class="hljs-tag">&lt;<span class="hljs-title">Gesture</span>
+    <span class="hljs-attribute">onTap</span>=<span class="hljs-value">{(gesture,</span> <span class="hljs-attribute">event</span>) =&gt;</span> { console.log(gesture, event); }}
+  &gt;
+    <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>container<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-title">Gesture</span>&gt;</span>,
+container);</code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><p>all callback funtion will one parammeter: <code>(gesture) =&gt; {}</code></p>
+<ul>
+<li>gesture: the rc-gesture state object, container all information you may need, see <a href="#gesture" title="gesture">gesture</a></li>
+</ul>
+<h3>props:<a id="user-content-props:" name="props:" class="anchor" aria-hidden="true" href="#props:"><span class="octicon octicon-link"></span></a></h3><h4>Tap &amp; Press<a id="user-content-tap-&amp;-press" name="tap-&amp;-press" class="anchor" aria-hidden="true" href="#tap-&amp;-press"><span class="octicon octicon-link"></span></a></h4><table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th style="width: 100px;">name</th>
+        <th style="width: 50px;">type</th>
+        <th>default</th>
+        <th>description</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td>onTap</td>
+          <td>function</td>
+          <th></th>
+          <td>single tap callback</td>
+      </tr>
+      <tr>
+          <td>onPress</td>
+          <td>function</td>
+          <th></th>
+          <td>long tap callback</td>
+      </tr>
+      <tr>
+          <td>onPressOut</td>
+          <td>function</td>
+          <th></th>
+          <td>long tap end callback</td>
+      </tr>
+</table>
+
+<h4>Swipe<a id="user-content-swipe" name="swipe" class="anchor" aria-hidden="true" href="#swipe"><span class="octicon octicon-link"></span></a></h4><table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th style="width: 100px;">name</th>
+        <th style="width: 50px;">type</th>
+        <th>default</th>
+        <th>description</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td>onSwipe</td>
+          <td>function</td>
+          <th></th>
+          <td>swipe callback, will triggered at the same time of all of below callback</td>
+      </tr>
+      <tr>
+          <td>onSwipeLeft</td>
+          <td>function</td>
+          <th></th>
+          <td>swipe left callback</td>
+      </tr>
+      <tr>
+          <td>onSwipeRight</td>
+          <td>function</td>
+          <th></th>
+          <td>swipe right callback</td>
+      </tr>
+      <tr>
+          <td>onSwipeTop</td>
+          <td>function</td>
+          <th></th>
+          <td>swipe top callback</td>
+      </tr>
+      <tr>
+          <td>onSwipeBottom</td>
+          <td>function</td>
+          <th></th>
+          <td>swipe bottom callback</td>
+      </tr>
+    </tbody>
+</table>
+
+<h4>Pan<a id="user-content-pan" name="pan" class="anchor" aria-hidden="true" href="#pan"><span class="octicon octicon-link"></span></a></h4><table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th style="width: 100px;">name</th>
+        <th style="width: 50px;">type</th>
+        <th>default</th>
+        <th>description</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td>onPan</td>
+          <td>function</td>
+          <th></th>
+          <td>pan callback, will triggered at the same time of all of below callback</td>
+      </tr>
+      <tr>
+          <td>onPanStart</td>
+          <td>function</td>
+          <th></th>
+          <td>drag start callback</td>
+      </tr>
+      <tr>
+          <td>onPanMove</td>
+          <td>function</td>
+          <th></th>
+          <td>drag move callback</td>
+      </tr>
+      <tr>
+          <td>onPanEnd</td>
+          <td>function</td>
+          <th></th>
+          <td>drag end callback</td>
+      </tr>
+      <tr>
+          <td>onPanCancel</td>
+          <td>function</td>
+          <th></th>
+          <td>drag cancel callback</td>
+      </tr>
+    </tbody>
+</table>
+
+<h4>Pinch<a id="user-content-pinch" name="pinch" class="anchor" aria-hidden="true" href="#pinch"><span class="octicon octicon-link"></span></a></h4><p>pinch gesture is not enabled by default, you must set <code>props.enablePinch = true</code> at first;</p>
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th style="width: 100px;">name</th>
+        <th style="width: 50px;">type</th>
+        <th>default</th>
+        <th>description</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td>onPinch</td>
+          <td>function</td>
+          <th></th>
+          <td>pinch callback, will triggered at the same time of all of below callback</td>
+      </tr>
+      <tr>
+          <td>onPinchStart</td>
+          <td>function</td>
+          <th></th>
+          <td>pinch start callback</td>
+      </tr>
+      <tr>
+          <td>onPinchMove</td>
+          <td>function</td>
+          <th></th>
+          <td>pinch move callback</td>
+      </tr>
+      <tr>
+          <td>onPinchEnd</td>
+          <td>function</td>
+          <th></th>
+          <td>pinch end callback</td>
+      </tr>
+      <tr>
+          <td>onPanCancel</td>
+          <td>function</td>
+          <th></th>
+          <td>pinch cancel callback</td>
+      </tr>
+      <tr>
+          <td>onPinchIn</td>
+          <td>function</td>
+          <th></th>
+          <td>pinch in callback</td>
+      </tr>
+      <tr>
+          <td>onPinchOut</td>
+          <td>function</td>
+          <th></th>
+          <td>pinch out callback</td>
+      </tr>
+    </tbody>
+</table>
+
+
+<h4>Rotate<a id="user-content-rotate" name="rotate" class="anchor" aria-hidden="true" href="#rotate"><span class="octicon octicon-link"></span></a></h4><p>pinch gesture is not enabled by default, you must set <code>props.enableRotate = true</code> at first;</p>
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th style="width: 100px;">name</th>
+        <th style="width: 50px;">type</th>
+        <th>default</th>
+        <th>description</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td>onRotate</td>
+          <td>function</td>
+          <th></th>
+          <td>rotate callback, will triggered at the same time of all of below callback</td>
+      </tr>
+      <tr>
+          <td>onRotateStart</td>
+          <td>function</td>
+          <th></th>
+          <td>rotate start callback</td>
+      </tr>
+      <tr>
+          <td>onRotateMove</td>
+          <td>function</td>
+          <th></th>
+          <td>rotate move callback</td>
+      </tr>
+      <tr>
+          <td>onRotateEnd</td>
+          <td>function</td>
+          <th></th>
+          <td>rotate end callback</td>
+      </tr>
+      <tr>
+          <td>onRotateCancel</td>
+          <td>function</td>
+          <th></th>
+          <td>rotate cancel callback</td>
+      </tr>
+    </tbody>
+</table>
+
+<h2>gesture<a id="user-content-gesture" name="gesture" class="anchor" aria-hidden="true" href="#gesture"><span class="octicon octicon-link"></span></a></h2><h2>Development<a id="user-content-development" name="development" class="anchor" aria-hidden="true" href="#development"><span class="octicon octicon-link"></span></a></h2><div class="highlight"><pre><code language="undefined">npm install
 npm start</code></pre></div><h2>Example<a id="user-content-example" name="example" class="anchor" aria-hidden="true" href="#example"><span class="octicon octicon-link"></span></a></h2><p><code>npm start</code> and then go to <code>http://localhost:8005/examples/</code></p>
 <p>Online examples: <a href="http://react-component.github.io/gesture/" title="null">http://react-component.github.io/gesture/</a></p>
 <h2>Test Case<a id="user-content-test-case" name="test-case" class="anchor" aria-hidden="true" href="#test-case"><span class="octicon octicon-link"></span></a></h2><p><code>http://localhost:8005/tests/runner.html?coverage</code></p>
