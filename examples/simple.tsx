@@ -23,14 +23,19 @@ const style = `
 `;
 
 class Demo extends Component<any, any> {
+  private root: any;
+  private rootNode: any;
+
   constructor(props) {
     super(props);
   }
-  log = (type, keys) => (...args) => {
+
+  log = (type: string, keys?: string[]) => (...args) => {
     console.log(type, ...args);
     const extInfo = keys ? keys.map(key => `${key} = ${args[0][key]}`).join(', ') : '';
-    this.refs.log.innerHTML += `<p>${type}: ${extInfo}</p>`;
-    this.refs.log.scrollTop = this.refs.log.scrollHeight;
+    const logEl = this.refs.log as any;
+    logEl.innerHTML += `<p>${type} ${extInfo}</p>`;
+    logEl.scrollTop = logEl.scrollHeight;
     if (type === 'onPinch') {
       const { scale } = args[0];
       this.rootNode = ReactDOM.findDOMNode(this.root);
@@ -45,16 +50,15 @@ class Demo extends Component<any, any> {
         <div className="outter">
           <Gesture
             enablePinch
+            enableRotate
             onTap={this.log('onTap')}
             onPress={this.log('onPress')}
-            onDoubleTap={this.log('onDoubleTap')}
             onPressUp={this.log('onPressUp')}
             onSwipe={this.log('onSwipe', ['angle', 'direction'])}
             onSwipeLeft = {this.log('onSwipeLeft', ['angle', 'direction'])}
             onSwipeRight = {this.log('onSwipeRight', ['angle', 'direction'])}
             onSwipeUp = {this.log('onSwipeUp', ['angle', 'direction'])}
             onSwipeDown = {this.log('onSwipeDown', ['angle', 'direction'])}
-            onSwipeCancel = {this.log('onSwipeCancel', ['angle', 'direction'])}
             onPan={this.log('onPan')}
             onPanStart={this.log('onPanStart')}
             onPinch={this.log('onPinch', ['pinchLen', 'scale'])}
@@ -62,6 +66,11 @@ class Demo extends Component<any, any> {
             onPinchMove={this.log('onPinchMove', ['pinchLen', 'scale'])}
             onPinchEnd={this.log('onPinchEnd', ['pinchLen', 'scale'])}
             onPinchCancel={this.log('onPinchCancel', ['pinchLen', 'scale'])}
+            onRotate={this.log('onRotate', ['rotation'])}
+            onRotateStart={this.log('onRotateStart', ['rotation'])}
+            onRotateMove={this.log('onRotateMove', ['rotation'])}
+            onRotateEnd={this.log('onRotateEnd', ['rotation'])}
+            onRotateCancel={this.log('onRotateCancel', ['rotation'])}
           >
             <div className="inner" ref={(el) => { this.root = el; }}>
             </div>

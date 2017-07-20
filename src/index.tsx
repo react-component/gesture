@@ -1,15 +1,36 @@
 /* tslint:disable:no-console */
 import React, { Component } from 'react';
 import {
-  calcLenFromTouch, calcRotation,
+  calcRotation,
   getEventName, now,
-  calcTriangleDistance, calcSwipeAngle,
-  shouldTriggerSwipe, shouldTriggerDoubleTap,
+  calcMutliFingerStatus, calcMoveStatus,
+  shouldTriggerSwipe,
   getDirection, getDirectionEventName,
 } from './util';
 import { PRESS } from './config';
 
-declare type GestureHandler = (s: IGestureStauts) => void;
+export declare type GestureHandler = (s: IGestureStauts) => void;
+
+export declare type Finger = {
+  x: number; // e.touches[i].pageX
+  y: number; // e.touches[i].pageY
+};
+
+export declare type MultiFingerStatus = {
+  x: number;
+  y: number;
+  z: number;
+  angle: number;
+};
+
+export declare type SingeFingerMoveStatus = {
+  x: number;
+  y: number;
+  z: number;
+  time: number;
+  velocity: number;
+  angle: number;
+};
 
 export interface IGesture {
   // config options
@@ -40,9 +61,6 @@ export interface IGesture {
   // tap
   onTap?: GestureHandler;
 
-  // double tap
-  onDoubleTap?: GestureHandler;
-
   // long tap
   onPress?: GestureHandler;
   onPressUp?: GestureHandler;
@@ -53,59 +71,40 @@ export interface IGesture {
   onSwipeRight?: GestureHandler;
   onSwipeUp?: GestureHandler;
   onSwipeDown?: GestureHandler;
-
-}
+};
 
 // http://hammerjs.github.io/api/#event-object
 export interface IGestureStauts {
-    /* start status */
+    /* start status snapshot */
     startTime: number;
-    startX: number;
-    startY: number;
+    startTouches: Finger[];
 
-    /* touch status snapshot */
+    startMutliFingerStatus?: MultiFingerStatus[];
+
+    /* now status snapshot */
     time: number;
-    x: number;
-    y: number;
+    touches: Finger[];
 
-    /* Total time and offset since touchStart */
-    deltaTime?: number; // in ms
-    deltaX?: number;
-    deltaY?: number;
-    delta?: number;
-    velocity?: number;
+    mutliFingerStatus?: MultiFingerStatus[];
 
-    /* whether is a double tap */
-    doubleTap?: boolean;
+    /* delta status from touchstart to now, just for singe finger */
+    moveStatus?: SingeFingerMoveStatus;
 
     /* whether is a long tap */
     press?: boolean;
 
     /* whether is a swipe*/
     swipe?: boolean;
+    direction?: number;
 
     /* whether is in pinch process */
     pinch?: boolean;
+    scale?: number;
 
     /* whether is in rotate process */
     rotate?: boolean;
-
-    /* pinch status */
-    pinchStartLen?: number;
-    pinchStartLenX?: number;
-    pinchStartLenY?: number;
-    pinchLen?: number;
-    pinchLenX?: number;
-    pinchLenY?: number;
-    scale?: number;
-
-    /* swipe status */
-    angle?: number; // Angle moved.
-
-    /* rotate status */
     rotation?: number; // Rotation (in deg) that has been done when multi-touch. 0 on a single touch.
-
-}
+};
 
 export default class Gesture extends Component<IGesture, any> {
   static defaultProps = {
@@ -117,62 +116,37 @@ export default class Gesture extends Component<IGesture, any> {
   };
 
   protected gesture: IGestureStauts;
-  protected _prevTapSnaoshot: Partial<IGestureStauts>;
 
   private pressTimer: number;
-  private cleanGestureTimer: number;
 
   constructor(props) {
     super(props);
   }
 
-  callEvent = (name, ...args) => {
+  triggerEvent = (name, ...args) => {
     const cb = this.props[name];
     if (typeof cb === 'function') {
       // always give user gesture object as first params first
       cb(this.getGestureState(), ...args);
     }
   }
-  callCombineEvent = (mainEventName, eventStatus, ...args) => {
-    this.callEvent(mainEventName, ...args);
+  triggerCombineEvent = (mainEventName, eventStatus, ...args) => {
+    this.triggerEvent(mainEventName, ...args);
     if (eventStatus) {
       const subEventName = getEventName(mainEventName, eventStatus);
-      this.callEvent(subEventName, ...args);
+      this.triggerEvent(subEventName, ...args);
     }
   }
-  updateGestureStatus = (e) => {
-    const { startTime, startX, startY } = this.gesture;
-    const { pageX, pageY } = e.touches[0];
-    const nowTime = now();
-    const deltaTime = nowTime - startTime;
-    const deltaX = pageX - startX;
-    const deltaY = pageY - startY;
-    const delta = calcTriangleDistance(deltaX, deltaY);
-    const velocity = delta / deltaTime;
-
-    this.setGestureState({
-      /* update status snapshot */
-      time: nowTime,
-      x: pageX,
-      y: pageY,
-      /* update duration status */
-      deltaTime,
-      deltaX,
-      deltaY,
-      delta,
-      velocity,
-    });
-  }
-  startPressTimer = (e) => {
-    this.cancerPressTimer();
+  initPressTimer = () => {
+    this.cleanPressTimer();
     this.pressTimer = setTimeout(() => {
       this.setGestureState({
         press: true,
       });
-      this.callEvent('onPress');
+      this.triggerEvent('onPress');
     }, PRESS.time);
   }
-  cancerPressTimer = () => {
+  cleanPressTimer = () => {
     /* tslint:disable:no-unused-expression */
     this.pressTimer && clearTimeout(this.pressTimer);
   }
@@ -199,201 +173,196 @@ export default class Gesture extends Component<IGesture, any> {
     console.log('clean gesture state');
     delete this.gesture;
   }
+  getTouches = (e) => {
+    return Array.prototype.slice.call(e.touches).map(item => ([item.pageX, item.pageY]));
+  }
 
-  initGestureStatus = (e) => {
-    // store the gesture state
-    const { pageX, pageY } = e.touches[0];
-    const nowTime = now();
-    this.setGestureState({
-      /* start status */
-      startTime: nowTime,
-      startX: pageX,
-      startY: pageY,
-      /* init prev status snapshot*/
-      time: nowTime,
-      x: pageX,
-      y: pageY,
-    });
-  }
-  doDoubleTap = () => {
-    if (this._prevTapSnaoshot) {
-      // check if double click
-      const { startTime, startX, startY } = this._prevTapSnaoshot as any;
-      const { time, x , y } = this.gesture;
-      const doubleTap = shouldTriggerDoubleTap(time - startTime, x - startX, y - startY);
-      this.setGestureState({
-        doubleTap,
-      });
-    }
-  }
   _handleTouchStart = (e) => {
     console.log('touchstart');
-    // in case touchmove just trigger once
+
     e.preventDefault();
-
     this.initGestureStatus(e);
-
-    this.doDoubleTap();
-
-    this.startMultiTouch(e);
-
-    this.startPressTimer(e);
+    this.initPressTimer();
+    this.checkIfMultiTouchStart();
+  }
+  initGestureStatus = (e) => {
+    this.cleanGestureState();
+    // store the gesture start state
+    const startTouches = this.getTouches(e);
+    const startTime = now();
+    const startMutliFingerStatus = calcMutliFingerStatus(startTouches);
+    this.setGestureState({
+      startTime,
+      startTouches,
+      startMutliFingerStatus,
+      /* copy for next time touch move cala convenient*/
+      time: startTime,
+      touches: startTouches,
+      mutliFingerStatus: startMutliFingerStatus,
+    });
   }
 
+  checkIfMultiTouchStart = () => {
+    const { enablePinch, enableRotate } = this.props;
+    const { touches } = this.gesture;
+    if (touches.length > 1 && (enablePinch || enableRotate)) {
+      if (enablePinch) {
+        const startMutliFingerStatus = calcMutliFingerStatus(touches);
+        this.setGestureState({
+         startMutliFingerStatus,
+
+         /* init pinch status */
+         pinch: true,
+         scale: 1,
+        });
+        this.triggerCombineEvent('onPinch', 'start');
+      }
+      if (enableRotate) {
+        this.setGestureState({
+          /* init rotate status */
+          rotate: true,
+          rotation: 0,
+        });
+        this.triggerCombineEvent('onRotate', 'start');
+      }
+    }
+  }
   _handleTouchMove = (e) => {
     console.log('touchmove');
     if (!this.gesture) {
-      // sometimes: touchstart -> touchmove.... --> touchend --> touchmove --> touchend
+      // sometimes weird happen: touchstart -> touchmove..touchmove.. --> touchend --> touchmove --> touchend
       // so we need to skip the unnormal event cycle after touchend
       return;
     }
 
     // not a long press
-    this.cancerPressTimer();
+    this.cleanPressTimer();
 
-    // not a double click
-    this.setGestureState({
-      doubleTap: false,
-    });
     this.updateGestureStatus(e);
-    this.doMultiTouch(e, 'move');
+    this.checkIfMultiTouchMove();
   }
+  checkIfMultiTouchMove = () => {
+    const { pinch, rotate, touches, startMutliFingerStatus, mutliFingerStatus } = this.gesture as any;
+    if (!pinch && !rotate) {
+      return;
+    }
+    if (touches.length < 2) {
+      this.setGestureState({
+        pinch: false,
+        rotate: false,
+      });
+      // Todo: 2 finger -> 1 finger, wait to test this situation
+      pinch && this.triggerCombineEvent('onPinch', 'cancel');
+      rotate && this.triggerCombineEvent('onRotate', 'cancel');
+      return;
+    }
 
+    if (pinch) {
+      const scale = mutliFingerStatus.z / startMutliFingerStatus.z;
+      this.setGestureState({
+        scale,
+      });
+      this.triggerCombineEvent('onPinch', 'move');
+    }
+    if (rotate) {
+      // Todo: wait to see if we can use below hammerjs way?
+      // https://github.com/hammerjs/hammer.js/blob/master/src/inputjs/get-rotation.js
+      const rotation = calcRotation(startMutliFingerStatus, mutliFingerStatus);
+      this.setGestureState({
+        rotation,
+      });
+      this.triggerCombineEvent('onRotate', 'move');
+    }
+  }
+  checkIfMultiTouchEnd = (status) => {
+    const { pinch, rotate } = this.gesture;
+    if (pinch) {
+      this.triggerCombineEvent('onPinch', status);
+    }
+    if (rotate) {
+      this.triggerCombineEvent('onRotate', status);
+    }
+  }
+  updateGestureStatus = (e) => {
+    const time = now();
+    this.setGestureState({
+      time,
+    });
+    if (!e.touches || !e.touches.length) {
+      return;
+    }
+    const { startTime, startTouches, pinch, rotate } = this.gesture;
+    const touches = this.getTouches(e);
+    const moveStatus = calcMoveStatus(startTouches, touches, time - startTime);
+    let mutliFingerStatus;
+    if (pinch || rotate) {
+      mutliFingerStatus = calcMutliFingerStatus(touches);
+    }
+
+    this.setGestureState({
+      /* update status snapshot */
+      touches,
+      mutliFingerStatus,
+      /* update duration status */
+      moveStatus,
+
+    });
+  }
   _handleTouchEnd = (e) => {
     console.log('touchend');
     if (!this.gesture) {
       return;
     }
-    this.cancerPressTimer();
-    this.doMultiTouch(e, 'end');
-    this.doTapOrSwipe(e);
-    this.cleanGestureState();
+    this.cleanPressTimer();
+    this.updateGestureStatus(e);
+    this.checkIfMultiTouchEnd('end');
+    this.checkIfEndWithTapOrSwipe();
   }
 
   _handleTouchCancel = (e) => {
-    // only if no touchMove, touchEnd, and prevent default, propgation in touchStart
+    // Todo: wait to test cancel case
     console.log('touchcancel');
     if (!this.gesture) {
       return;
     }
-    this.cancerPressTimer();
+    this.cleanPressTimer();
     this.updateGestureStatus(e);
-    this.doMultiTouch(e, 'cancel');
-    this.cleanGestureState();
+    this.checkIfMultiTouchEnd('cancel');
   }
-  startMultiTouch = (e) => {
-    const { enablePinch, enableRotate } = this.props;
-    if (e.touches.length > 1 && (enablePinch || enableRotate)) {
-      if (enablePinch) {
-        const { x: pinchStartLenX, y: pinchStartLenY, z: pinchStartLen } = calcLenFromTouch(e.touches);
-        this.setGestureState({
-          pinch: true,
-          pinchLen: pinchStartLen,
-          pinchStartLenX,
-          pinchStartLenY,
-          pinchStartLen,
-          scale: 1,
-        });
-        this.callCombineEvent('onPinch', 'start');
-      }
-      if (enableRotate) {
-        this.setGestureState({
-          rotate: true,
-          rotation: 0,
-        });
-        this.callCombineEvent('onRotate', 'start');
-      }
-    }
-  }
-  doMultiTouch = (e, status) => {
-    const { enablePinch, enableRotate } = this.props;
-    const { pinchStartLen, pinchStartLenX, pinchStartLenY, pinch, rotate } = this.gesture as any;
-    if (enablePinch || enableRotate) {
-      if (e.touches.length > 1) {
-        const { x: pinchLenX, y: pinchLenY, z: pinchLen } = calcLenFromTouch(e.touches);
-        this.setGestureState({
-          pinchLen,
-          pinchLenX,
-          pinchLenY,
-        });
-        if (enablePinch) {
-          const scale = pinchLen / pinchStartLen;
-          this.setGestureState({
-            scale,
-          });
-          this.callCombineEvent('onPinch', status);
-        }
-        if (enableRotate) {
-          const rotation = calcRotation({
-            x: pinchLenX,
-            y: pinchLenY,
-            z: pinchLen,
-          }, {
-            x: pinchStartLenX,
-            y: pinchStartLenY,
-            z: pinchStartLen,
-          });
-          this.setGestureState({
-            rotation,
-          });
-          this.callCombineEvent('onRotate', status);
-        }
-      }
-      if (status === 'end') {
-        if (pinch) {
-          this.callCombineEvent('onPinch', status);
-        }
-        if (rotate) {
-          this.callCombineEvent('onRotate', status);
-        }
-      }
-    }
-  }
-  doTapOrSwipe = e => {
-    const { velocity, delta, doubleTap, press, startTime,
-      startX, startY, deltaX, deltaY, pinch, rotate,
+
+  checkIfEndWithTapOrSwipe = () => {
+    const {
+      startTime, startTouches, moveStatus, pinch, rotate, press, time,
     } = this.gesture;
+
     if (pinch || rotate) {
       return;
     }
-    const swipe = shouldTriggerSwipe(delta, velocity);
-    const direction = getDirection(deltaX, deltaY);
-    this.setGestureState({
-      swipe,
-      direction,
-    });
-    if (swipe) {
-      this.doSwipe(e);
-    } else {
-      if (doubleTap) {
-        this.callEvent('onDoubleTap', e);
-        delete this._prevTapSnaoshot;
-      } else if (press) {
-        this.callEvent('onPressUp', e);
-      } else {
-        this.callEvent('onTap', e);
-        this._prevTapSnaoshot = {
-          startTime,
-          startX,
-          startY,
-        };
+    if (moveStatus) {
+      const { x, y, z, velocity } = moveStatus;
+      const swipe = shouldTriggerSwipe(z, velocity);
+      const direction = getDirection(x, y);
+      this.setGestureState({
+        swipe,
+        direction,
+      });
+      if (swipe) {
+        const eventName = getDirectionEventName(direction);
+        this.triggerCombineEvent('onSwipe', eventName);
+        return;
       }
     }
+
+    if (press) {
+      this.triggerEvent('onPressUp');
+      return;
+    }
+    this.triggerEvent('onTap');
+
   }
 
-  doSwipe = (e) => {
-    const { deltaX, deltaY } = this.gesture as any;
-    const angle = calcSwipeAngle(deltaX, deltaY);
-    const direction = getDirection(deltaX, deltaY);
-    const eventName = getDirectionEventName(direction);
-    this.setGestureState({
-      angle,
-      direction,
-    });
-    this.callCombineEvent('onSwipe', eventName);
-  }
   componentWillUnmount() {
-    this.cancerPressTimer();
+    this.cleanPressTimer();
   }
   render() {
     const { children } = this.props;
