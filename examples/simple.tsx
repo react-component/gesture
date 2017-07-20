@@ -26,9 +26,10 @@ class Demo extends Component<any, any> {
   constructor(props) {
     super(props);
   }
-  log = type => (...args) => {
+  log = (type, keys) => (...args) => {
     console.log(type, ...args);
-    this.refs.log.innerHTML += `<p>${type}: ${Date.now()}</p>`;
+    const extInfo = keys ? keys.map(key => `${key} = ${args[0][key]}`).join(', ') : '';
+    this.refs.log.innerHTML += `<p>${type}: ${extInfo} time = ${Date.now()}</p>`;
     this.refs.log.scrollTop = this.refs.log.scrollHeight;
   }
   render() {
@@ -41,7 +42,11 @@ class Demo extends Component<any, any> {
             onTap={this.log('onTap')}
             onPress={this.log('onPress')}
             onPressUp={this.log('onPressUp')}
-            onSwipe={this.log('onSwipe')}
+            onSwipe={this.log('onSwipe', ['angle', 'direction'])}
+            onSwipeLeft = {this.log('onSwipeLeft', ['angle', 'direction'])}
+            onSwipeRight = {this.log('onSwipeRight', ['angle', 'direction'])}
+            onSwipeUp = {this.log('onSwipeUp', ['angle', 'direction'])}
+            onSwipeDown = {this.log('onSwipeDown', ['angle', 'direction'])}
             onDoubleTap={this.log('onDoubleTap')}
             onPanStart={this.log('onPanStart')}
           >

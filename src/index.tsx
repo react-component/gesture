@@ -1,9 +1,11 @@
 /* tslint:disable:no-console */
 import React, { Component } from 'react';
 import {
-  now, calcLenFromTouch, calcRotateAngle,
-  getEventName, isDoubleTap, calcTriangleDistance,
-  shouldTriggerSwipe,
+  calcLenFromTouch, calcRotation,
+  getEventName, now,
+  calcTriangleDistance, calcSwipeAngle,
+  shouldTriggerSwipe, shouldTriggerDoubleTap,
+  getDirection, getDirectionEventName,
 } from './util';
 import { PRESS } from './config';
 
@@ -39,6 +41,10 @@ export interface IGesture {
 
   // swipe
   onSwipe?: (s: IGestureStauts, e: object) => {};
+  onSwipeLeft?: (s: IGestureStauts, e: object) => {};
+  onSwipeRight?: (s: IGestureStauts, e: object) => {};
+  onSwipeUp?: (s: IGestureStauts, e: object) => {};
+  onSwipeDown?: (s: IGestureStauts, e: object) => {};
 
 }
 
@@ -79,8 +85,11 @@ export interface IGestureStauts {
     pinchLenY?: number;
     scale?: number;
 
-    /* rotate status */
+    /* swipe status */
     angle?: number; // Angle moved.
+
+    /* rotate status */
+    rotation?: number; // Rotation (in deg) that has been done when multi-touch. 0 on a single touch.
 
 }
 
@@ -97,7 +106,6 @@ export default class Gesture extends Component<IGesture, any> {
   protected _prevTapSnaoshot: Partial<IGestureStauts>;
 
   private pressTimer: number;
-  private swipeTimer: number;
   private cleanGestureTimer: number;
 
   constructor(props) {
@@ -174,6 +182,7 @@ export default class Gesture extends Component<IGesture, any> {
     }, 0);
   }
   fixWrongTick = () => {
+    // this happend in ios, when you double click, why ?
     this.cleanGestureTimer && clearTimeout(this.cleanGestureTimer);
     delete this.gesture;
   }
@@ -198,7 +207,7 @@ export default class Gesture extends Component<IGesture, any> {
       // check if double click
       const { startTime, startX, startY } = this._prevTapSnaoshot as any;
       const { time, x , y } = this.gesture;
-      const doubleTap = isDoubleTap(time - startTime, x - startX, y - startY);
+      const doubleTap = shouldTriggerDoubleTap(time - startTime, x - startX, y - startY);
       this.setGestureState({
         doubleTap,
       });
@@ -206,7 +215,7 @@ export default class Gesture extends Component<IGesture, any> {
   }
   _handleTouchStart = (e) => {
     console.log('touchstart', e.touches);
-
+    // in case touchmove just trigger once
     e.preventDefault();
     e.persist();
 
@@ -238,11 +247,12 @@ export default class Gesture extends Component<IGesture, any> {
     console.log('touchend', e.touches);
     this.cancerPressTimer();
     this.doMultiTouch(e, 'end');
-    this.doSwipe(e);
+    this.doTapOrSwipe(e);
     this.cleanGestureState();
   }
 
   _handleTouchCancel = (e) => {
+    // only if no touchMove, touchEnd, and prevent default, propgation in touchStart
     console.log('touchcancel', e.touches);
     this.cancerPressTimer();
     this.updateGestureStatus(e);
@@ -263,7 +273,7 @@ export default class Gesture extends Component<IGesture, any> {
       }
       if (enableRotate) {
         this.setGestureState({
-          angle: 0,
+          rotation: 0,
         });
         this.callEvent('onRotateStart', e);
       }
@@ -287,7 +297,7 @@ export default class Gesture extends Component<IGesture, any> {
         this.callEvent(getEventName('onPinch', status), e);
       }
       if (enableRotate) {
-        const angle = calcRotateAngle({
+        const rotation = calcRotation({
           x: pinchLenX,
           y: pinchLenY,
           z: pinchLen,
@@ -297,20 +307,22 @@ export default class Gesture extends Component<IGesture, any> {
           z: pinchStartLen,
         });
         this.setGestureState({
-          angle,
+          rotation,
         });
         this.callEvent(getEventName('onRotate', status), e);
       }
     }
   }
-  doSwipe = e => {
-    const { velocity, delta, doubleTap, press, startTime, startX, startY } = this.gesture;
+  doTapOrSwipe = e => {
+    const { velocity, delta, doubleTap, press, startTime, startX, startY, deltaX, deltaY } = this.gesture;
     const swipe = shouldTriggerSwipe(delta, velocity);
+    const direction = getDirection(deltaX, deltaY);
     this.setGestureState({
       swipe,
+      direction,
     });
     if (swipe) {
-      this.startSwipeTimer(e);
+      this.doSwipe(e);
     } else {
       if (doubleTap) {
         this.callEvent('onDoubleTap', e);
@@ -327,19 +339,21 @@ export default class Gesture extends Component<IGesture, any> {
       }
     }
   }
-  startSwipeTimer = (e) => {
-    this.cancelSwipeTimer();
-    this.swipeTimer = setTimeout(() => {
-      this.callEvent('onSwipe', e);
-    }, 0);
-  }
-  cancelSwipeTimer = () => {
-    /* tslint:disable:no-unused-expression */
-    this.swipeTimer && clearTimeout(this.swipeTimer);
+
+  doSwipe = (e) => {
+    const { deltaX, deltaY } = this.gesture as any;
+    const angle = calcSwipeAngle(deltaX, deltaY);
+    const direction = getDirection(deltaX, deltaY);
+    const eventName = getDirectionEventName(direction);
+    this.setGestureState({
+      angle,
+      direction,
+    });
+    this.callEvent('onSwipe', e);
+    this.callEvent(eventName, e);
   }
   componentWillUnmount() {
     this.cancerPressTimer();
-    this.cancelSwipeTimer();
   }
   render() {
     const { children } = this.props;
