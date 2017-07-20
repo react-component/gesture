@@ -90,16 +90,16 @@ export function getDirectionEventName(direction) {
     case DIRECTION_NONE:
       break;
     case DIRECTION_LEFT:
-      name = 'onSwipeLeft';
+      name = 'left';
       break;
     case DIRECTION_RIGHT:
-      name = 'onSwipeRight';
+      name = 'right';
       break;
     case DIRECTION_UP:
-      name = 'onSwipeUp';
+      name = 'up';
       break;
     case DIRECTION_DOWN:
-      name = 'onSwipeDown';
+      name = 'down';
       break;
     default:
   }

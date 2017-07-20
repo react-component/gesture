@@ -9,48 +9,50 @@ import {
 } from './util';
 import { PRESS } from './config';
 
+declare type GestureHandler = (s: IGestureStauts) => void;
+
 export interface IGesture {
   // config options
   enableRotate?: boolean;
   enablePinch?: boolean;
 
   // pinch: s.zoom
-  onPinch?: (s: IGestureStauts, e: object) => {};
-  onPinchStart?: (s: IGestureStauts, e: object) => {};
-  onPinchMove?: (s: IGestureStauts, e: object) => {};
-  onPinchEnd?: (s: IGestureStauts, e: object) => {};
-  onPinchCancel?: (s: IGestureStauts, e: object) => {};
+  onPinch?: GestureHandler;
+  onPinchStart?: GestureHandler;
+  onPinchMove?: GestureHandler;
+  onPinchEnd?: GestureHandler;
+  onPinchCancel?: GestureHandler;
 
   // rotate: s.angle
-  onRotate?: (s: IGestureStauts, e: object) => {};
-  onRotateStart?: (s: IGestureStauts, e: object) => {};
-  onRotateMove?: (s: IGestureStauts, e: object) => {};
-  onRotateEnd?: (s: IGestureStauts, e: object) => {};
-  onRotateCancel?: (s: IGestureStauts, e: object) => {};
+  onRotate?: GestureHandler;
+  onRotateStart?: GestureHandler;
+  onRotateMove?: GestureHandler;
+  onRotateEnd?: GestureHandler;
+  onRotateCancel?: GestureHandler;
 
   // pan: s.delta
-  onPan?: (s: IGestureStauts, e: object) => {};
-  onPanStart?: (s: IGestureStauts, e: object) => {};
-  onPanMove?: (s: IGestureStauts, e: object) => {};
-  onPanEnd?: (s: IGestureStauts, e: object) => {};
-  onPanCancel?: (s: IGestureStauts, e: object) => {};
+  onPan?: GestureHandler;
+  onPanStart?: GestureHandler;
+  onPanMove?: GestureHandler;
+  onPanEnd?: GestureHandler;
+  onPanCancel?: GestureHandler;
 
   // tap
-  onTap?: (s: IGestureStauts, e: object) => {};
+  onTap?: GestureHandler;
 
   // double tap
-  onDoubleTap?: (s: IGestureStauts, e: object) => {};
+  onDoubleTap?: GestureHandler;
 
   // long tap
-  onPress?: (s: IGestureStauts, e: object) => {};
-  onPressUp?: (s: IGestureStauts, e: object) => {};
+  onPress?: GestureHandler;
+  onPressUp?: GestureHandler;
 
   // swipe
-  onSwipe?: (s: IGestureStauts, e: object) => {};
-  onSwipeLeft?: (s: IGestureStauts, e: object) => {};
-  onSwipeRight?: (s: IGestureStauts, e: object) => {};
-  onSwipeUp?: (s: IGestureStauts, e: object) => {};
-  onSwipeDown?: (s: IGestureStauts, e: object) => {};
+  onSwipe?: GestureHandler;
+  onSwipeLeft?: GestureHandler;
+  onSwipeRight?: GestureHandler;
+  onSwipeUp?: GestureHandler;
+  onSwipeDown?: GestureHandler;
 
 }
 
@@ -81,6 +83,12 @@ export interface IGestureStauts {
 
     /* whether is a swipe*/
     swipe?: boolean;
+
+    /* whether is in pinch process */
+    pinch?: boolean;
+
+    /* whether is in rotate process */
+    rotate?: boolean;
 
     /* pinch status */
     pinchStartLen?: number;
@@ -125,7 +133,13 @@ export default class Gesture extends Component<IGesture, any> {
       cb(this.getGestureState(), ...args);
     }
   }
-
+  callCombineEvent = (mainEventName, eventStatus, ...args) => {
+    this.callEvent(mainEventName, ...args);
+    if (eventStatus) {
+      const subEventName = getEventName(mainEventName, eventStatus);
+      this.callEvent(subEventName, ...args);
+    }
+  }
   updateGestureStatus = (e) => {
     const { startTime, startX, startY } = this.gesture;
     const { pageX, pageY } = e.touches[0];
@@ -155,7 +169,7 @@ export default class Gesture extends Component<IGesture, any> {
       this.setGestureState({
         press: true,
       });
-      this.callEvent('onPress', e);
+      this.callEvent('onPress');
     }, PRESS.time);
   }
   cancerPressTimer = () => {
@@ -182,18 +196,11 @@ export default class Gesture extends Component<IGesture, any> {
     }
   }
   cleanGestureState = () => {
-    this.cleanGestureTimer = setTimeout(() => {
-      console.log('clean gesture state');
-      delete this.gesture;
-    }, 0);
-  }
-  fixWrongTick = () => {
-    // this happend in ios, when you double click, why ?
-    this.cleanGestureTimer && clearTimeout(this.cleanGestureTimer);
+    console.log('clean gesture state');
     delete this.gesture;
   }
+
   initGestureStatus = (e) => {
-    this.fixWrongTick();
     // store the gesture state
     const { pageX, pageY } = e.touches[0];
     const nowTime = now();
@@ -220,10 +227,9 @@ export default class Gesture extends Component<IGesture, any> {
     }
   }
   _handleTouchStart = (e) => {
-    console.log('touchstart', e.touches);
+    console.log('touchstart');
     // in case touchmove just trigger once
     e.preventDefault();
-    e.persist();
 
     this.initGestureStatus(e);
 
@@ -235,8 +241,12 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   _handleTouchMove = (e) => {
-    console.log('touchmove', e.touches);
-    e.persist();
+    console.log('touchmove');
+    if (!this.gesture) {
+      // sometimes: touchstart -> touchmove.... --> touchend --> touchmove --> touchend
+      // so we need to skip the unnormal event cycle after touchend
+      return;
+    }
 
     // not a long press
     this.cancerPressTimer();
@@ -250,7 +260,10 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   _handleTouchEnd = (e) => {
-    console.log('touchend', e.touches);
+    console.log('touchend');
+    if (!this.gesture) {
+      return;
+    }
     this.cancerPressTimer();
     this.doMultiTouch(e, 'end');
     this.doTapOrSwipe(e);
@@ -259,7 +272,10 @@ export default class Gesture extends Component<IGesture, any> {
 
   _handleTouchCancel = (e) => {
     // only if no touchMove, touchEnd, and prevent default, propgation in touchStart
-    console.log('touchcancel', e.touches);
+    console.log('touchcancel');
+    if (!this.gesture) {
+      return;
+    }
     this.cancerPressTimer();
     this.updateGestureStatus(e);
     this.doMultiTouch(e, 'cancel');
@@ -271,56 +287,75 @@ export default class Gesture extends Component<IGesture, any> {
       if (enablePinch) {
         const { x: pinchStartLenX, y: pinchStartLenY, z: pinchStartLen } = calcLenFromTouch(e.touches);
         this.setGestureState({
+          pinch: true,
+          pinchLen: pinchStartLen,
           pinchStartLenX,
           pinchStartLenY,
           pinchStartLen,
+          scale: 1,
         });
-        this.callEvent('onPinchStart', e);
+        this.callCombineEvent('onPinch', 'start');
       }
       if (enableRotate) {
         this.setGestureState({
+          rotate: true,
           rotation: 0,
         });
-        this.callEvent('onRotateStart', e);
+        this.callCombineEvent('onRotate', 'start');
       }
     }
   }
   doMultiTouch = (e, status) => {
     const { enablePinch, enableRotate } = this.props;
-    const { pinchStartLen, pinchStartLenX, pinchStartLenY } = this.gesture as any;
-    if (e.touches.length > 1 && (enablePinch || enableRotate)) {
-      const { x: pinchLenX, y: pinchLenY, z: pinchLen } = calcLenFromTouch(e.touches);
-      this.setGestureState({
-        pinchLen,
-        pinchLenX,
-        pinchLenY,
-      });
-      if (enablePinch) {
-        const scale = pinchLen / pinchStartLen;
+    const { pinchStartLen, pinchStartLenX, pinchStartLenY, pinch, rotate } = this.gesture as any;
+    if (enablePinch || enableRotate) {
+      if (e.touches.length > 1) {
+        const { x: pinchLenX, y: pinchLenY, z: pinchLen } = calcLenFromTouch(e.touches);
         this.setGestureState({
-          scale,
+          pinchLen,
+          pinchLenX,
+          pinchLenY,
         });
-        this.callEvent(getEventName('onPinch', status), e);
+        if (enablePinch) {
+          const scale = pinchLen / pinchStartLen;
+          this.setGestureState({
+            scale,
+          });
+          this.callCombineEvent('onPinch', status);
+        }
+        if (enableRotate) {
+          const rotation = calcRotation({
+            x: pinchLenX,
+            y: pinchLenY,
+            z: pinchLen,
+          }, {
+            x: pinchStartLenX,
+            y: pinchStartLenY,
+            z: pinchStartLen,
+          });
+          this.setGestureState({
+            rotation,
+          });
+          this.callCombineEvent('onRotate', status);
+        }
       }
-      if (enableRotate) {
-        const rotation = calcRotation({
-          x: pinchLenX,
-          y: pinchLenY,
-          z: pinchLen,
-        }, {
-          x: pinchStartLenX,
-          y: pinchStartLenY,
-          z: pinchStartLen,
-        });
-        this.setGestureState({
-          rotation,
-        });
-        this.callEvent(getEventName('onRotate', status), e);
+      if (status === 'end') {
+        if (pinch) {
+          this.callCombineEvent('onPinch', status);
+        }
+        if (rotate) {
+          this.callCombineEvent('onRotate', status);
+        }
       }
     }
   }
   doTapOrSwipe = e => {
-    const { velocity, delta, doubleTap, press, startTime, startX, startY, deltaX, deltaY } = this.gesture;
+    const { velocity, delta, doubleTap, press, startTime,
+      startX, startY, deltaX, deltaY, pinch, rotate,
+    } = this.gesture;
+    if (pinch || rotate) {
+      return;
+    }
     const swipe = shouldTriggerSwipe(delta, velocity);
     const direction = getDirection(deltaX, deltaY);
     this.setGestureState({
@@ -355,8 +390,7 @@ export default class Gesture extends Component<IGesture, any> {
       angle,
       direction,
     });
-    this.callEvent('onSwipe', e);
-    this.callEvent(eventName, e);
+    this.callCombineEvent('onSwipe', eventName);
   }
   componentWillUnmount() {
     this.cancerPressTimer();

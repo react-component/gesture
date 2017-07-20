@@ -29,8 +29,13 @@ class Demo extends Component<any, any> {
   log = (type, keys) => (...args) => {
     console.log(type, ...args);
     const extInfo = keys ? keys.map(key => `${key} = ${args[0][key]}`).join(', ') : '';
-    this.refs.log.innerHTML += `<p>${type}: ${extInfo} time = ${Date.now()}</p>`;
+    this.refs.log.innerHTML += `<p>${type}: ${extInfo}</p>`;
     this.refs.log.scrollTop = this.refs.log.scrollHeight;
+    if (type === 'onPinch') {
+      const { scale } = args[0];
+      this.rootNode = ReactDOM.findDOMNode(this.root);
+      this.rootNode.style.transform = `scale(${scale})`;
+    }
   }
   render() {
     return (
@@ -39,6 +44,7 @@ class Demo extends Component<any, any> {
         <div ref="log" style={{height: 100, overflow: 'auto', margin: 10}}/>
         <div className="outter">
           <Gesture
+            enablePinch
             onTap={this.log('onTap')}
             onPress={this.log('onPress')}
             onDoubleTap={this.log('onDoubleTap')}
@@ -51,8 +57,13 @@ class Demo extends Component<any, any> {
             onSwipeCancel = {this.log('onSwipeCancel', ['angle', 'direction'])}
             onPan={this.log('onPan')}
             onPanStart={this.log('onPanStart')}
+            onPinch={this.log('onPinch', ['pinchLen', 'scale'])}
+            onPinchStart={this.log('onPinchStart', ['pinchLen', 'scale'])}
+            onPinchMove={this.log('onPinchMove', ['pinchLen', 'scale'])}
+            onPinchEnd={this.log('onPinchEnd', ['pinchLen', 'scale'])}
+            onPinchCancel={this.log('onPinchCancel', ['pinchLen', 'scale'])}
           >
-            <div className="inner">
+            <div className="inner" ref={(el) => { this.root = el; }}>
             </div>
           </Gesture>
         </div>

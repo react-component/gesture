@@ -42,6 +42,7 @@ npm install --save rc-gesture
 
 ```tsx
 import Gesture from 'rc-gesture';
+
 ReactDOM.render(
   <Gesture
     onTap={(gesture, event) => { console.log(gesture, event); }}
@@ -54,10 +55,9 @@ container);
 
 ## API
 
-both callback funtion will accept two params: `(gesture, event) => {}`
+all callback funtion will one parammeter: `(gesture) => {}`
 
 - gesture: the rc-gesture state object, container all information you may need, see [gesture](#gesture)
-- event: the react event object.
 
 ### props:
 
