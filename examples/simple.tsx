@@ -34,8 +34,10 @@ class Demo extends Component<any, any> {
 
   log = (type: string, keys?: string[]) => (...args) => {
     console.log(type, ...args);
-    this.doLog(type, keys, ...args);
-    this.doTransform(type, ...args);
+    window.requestAnimationFrame(() => {
+      this.doLog(type, keys, ...args);
+      this.doTransform(type, ...args);
+    });
   }
   doLog = (type, keys, ...args) => {
     const extInfo = keys ? keys.map(key => `${key} = ${args[0][key]}`).join(', ') : '';
