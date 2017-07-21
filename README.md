@@ -136,7 +136,7 @@ all callback funtion will one parammeter: `(gesture) => {}`
     </tbody>
 </table>
 
-#### Pan
+#### Pan (**Unsupported Yet*)
 <table class="table table-bordered table-striped">
     <thead>
     <tr>

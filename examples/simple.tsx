@@ -1,4 +1,4 @@
-/* tslint:disable:no-console */
+/* tslint:disable:no-console no-unused-expression */
 
 import Gesture from '../src/index';
 import React, { Component } from 'react';
@@ -25,23 +25,45 @@ const style = `
 class Demo extends Component<any, any> {
   private root: any;
   private rootNode: any;
+  private _scale: number;
+  private _rotation: number;
 
   constructor(props) {
     super(props);
   }
 
   log = (type: string, keys?: string[]) => (...args) => {
-    console.log(type, ...args);
+    this.doTapOrPress(type, keys, ...args);
+    this.doTransform(type, ...args);
+  }
+  doTapOrPress = (type, keys, ...args) => {
+    if (['onTap', 'onPress', 'onPressUp'].indexOf(type) === -1) {
+      return;
+    }
     const extInfo = keys ? keys.map(key => `${key} = ${args[0][key]}`).join(', ') : '';
     const logEl = this.refs.log as any;
     logEl.innerHTML += `<p>${type} ${extInfo}</p>`;
     logEl.scrollTop = logEl.scrollHeight;
+  }
+  doTransform = (type, ...args) => {
     if (type === 'onPinch') {
       const { scale } = args[0];
-      this.rootNode = ReactDOM.findDOMNode(this.root);
-      this.rootNode.style.transform = `scale(${scale})`;
+      this._scale = scale;
     }
+    if (type === 'onRotate') {
+      const { rotation }  = args[0];
+      this._rotation = rotation;
+    }
+    let transform: any = [];
+    // console.log(type, ...args);    let transform: any = [];
+    this._scale && transform.push(`scale(${this._scale})`);
+    this._rotation && transform.push(`rotate(${this._rotation}deg)`);
+
+    transform = transform.join(' ');
+    this.rootNode = ReactDOM.findDOMNode(this.root);
+    this.rootNode.style.transform = transform;
   }
+
   render() {
     return (
       <div>

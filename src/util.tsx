@@ -45,17 +45,10 @@ export function calcMoveStatus(startTouches, touches, time) {
   };
 }
 export function calcRotation(startMutliFingerStatus, mutliFingerStatus) {
-  const { x: startX, y: startY, z: startZ } = startMutliFingerStatus;
-  const { x, y, z } = mutliFingerStatus;
-  if (startZ === 0 || z === 0) {
-    return 0;
-  }
-  // https://en.wikipedia.org/wiki/Dot_product
-  let cosine = (startX * x + startY * y) / startZ * z;
-  if (cosine > 1) {
-    cosine = 1;
-  }
-  return Math.acos(cosine);
+  const { angle: startAngle } = startMutliFingerStatus;
+  const { angle } = mutliFingerStatus;
+
+  return angle - startAngle;
 }
 
 export function getEventName(prefix, status) {

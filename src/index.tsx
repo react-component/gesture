@@ -170,11 +170,14 @@ export default class Gesture extends Component<IGesture, any> {
     }
   }
   cleanGestureState = () => {
-    console.log('clean gesture state');
+    console.log('clean pre gesture state');
     delete this.gesture;
   }
   getTouches = (e) => {
-    return Array.prototype.slice.call(e.touches).map(item => ([item.pageX, item.pageY]));
+    return Array.prototype.slice.call(e.touches).map(item => ({
+      x: item.pageX,
+      y: item.pageY,
+    }));
   }
 
   _handleTouchStart = (e) => {
@@ -265,8 +268,6 @@ export default class Gesture extends Component<IGesture, any> {
       this.triggerCombineEvent('onPinch', 'move');
     }
     if (rotate) {
-      // Todo: wait to see if we can use below hammerjs way?
-      // https://github.com/hammerjs/hammer.js/blob/master/src/inputjs/get-rotation.js
       const rotation = calcRotation(startMutliFingerStatus, mutliFingerStatus);
       this.setGestureState({
         rotation,
@@ -331,9 +332,7 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   checkIfEndWithTapOrSwipe = () => {
-    const {
-      startTime, startTouches, moveStatus, pinch, rotate, press, time,
-    } = this.gesture;
+    const { moveStatus, pinch, rotate, press } = this.gesture;
 
     if (pinch || rotate) {
       return;
