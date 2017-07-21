@@ -6494,17 +6494,16 @@ module.exports = lowPriorityWarning;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return DIRECTION_NONE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return DIRECTION_LEFT; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return DIRECTION_RIGHT; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return DIRECTION_UP; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return DIRECTION_DOWN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return DIRECTION_NONE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return DIRECTION_LEFT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return DIRECTION_RIGHT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return DIRECTION_UP; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return DIRECTION_DOWN; });
 /* unused harmony export DIRECTION_HORIZONTAL */
 /* unused harmony export DIRECTION_VERTICAL */
 /* unused harmony export DIRECTION_ALL */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return TAP; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PRESS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return SWIPE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return SWIPE; });
 /* tslint:disable:no-bitwise */
 // http://hammerjs.github.io/api/#directions
 var DIRECTION_NONE = 1;
@@ -6515,15 +6514,9 @@ var DIRECTION_DOWN = 16;
 var DIRECTION_HORIZONTAL = DIRECTION_LEFT | DIRECTION_RIGHT;
 var DIRECTION_VERTICAL = DIRECTION_UP | DIRECTION_DOWN;
 var DIRECTION_ALL = DIRECTION_HORIZONTAL | DIRECTION_VERTICAL;
-// http://hammerjs.github.io/recognizer-tap/
-var TAP = {
-    time: 250,
-    posThreshold: 10
-};
 // http://hammerjs.github.io/recognizer-press/
 var PRESS = {
-    time: 251,
-    threshold: 9
+    time: 251
 };
 // http://hammerjs.github.io/recognizer-swipe/
 var SWIPE = {
@@ -9748,7 +9741,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-/* tslint:disable:no-console */
+/* tslint:disable:no-console no-unused-expression */
 
 
 
@@ -9764,25 +9757,49 @@ var Demo = function (_Component) {
 
         _this.log = function (type, keys) {
             return function () {
-                var _console;
-
                 for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
                     args[_key] = arguments[_key];
                 }
 
-                (_console = console).log.apply(_console, [type].concat(args));
-                var extInfo = keys ? keys.map(function (key) {
-                    return key + ' = ' + args[0][key];
-                }).join(', ') : '';
-                _this.refs.log.innerHTML += '<p>' + type + ': ' + extInfo + '</p>';
-                _this.refs.log.scrollTop = _this.refs.log.scrollHeight;
-                if (type === 'onPinch') {
-                    var scale = args[0].scale;
-
-                    _this.rootNode = __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.findDOMNode(_this.root);
-                    _this.rootNode.style.transform = 'scale(' + scale + ')';
-                }
+                _this.doTapOrPress.apply(_this, [type, keys].concat(args));
+                _this.doTransform.apply(_this, [type].concat(args));
             };
+        };
+        _this.doTapOrPress = function (type, keys) {
+            for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
+                args[_key2 - 2] = arguments[_key2];
+            }
+
+            if (['onTap', 'onPress', 'onPressUp'].indexOf(type) === -1) {
+                return;
+            }
+            var extInfo = keys ? keys.map(function (key) {
+                return key + ' = ' + args[0][key];
+            }).join(', ') : '';
+            var logEl = _this.refs.log;
+            logEl.innerHTML += '<p>' + type + ' ' + extInfo + '</p>';
+            logEl.scrollTop = logEl.scrollHeight;
+        };
+        _this.doTransform = function (type) {
+            if (type === 'onPinch') {
+                var _ref = arguments.length <= 1 ? undefined : arguments[1],
+                    scale = _ref.scale;
+
+                _this._scale = scale;
+            }
+            if (type === 'onRotate') {
+                var _ref2 = arguments.length <= 1 ? undefined : arguments[1],
+                    rotation = _ref2.rotation;
+
+                _this._rotation = rotation;
+            }
+            var transform = [];
+            // console.log(type, ...args);    let transform: any = [];
+            _this._scale && transform.push('scale(' + _this._scale + ')');
+            _this._rotation && transform.push('rotate(' + _this._rotation + 'deg)');
+            transform = transform.join(' ');
+            _this.rootNode = __WEBPACK_IMPORTED_MODULE_2_react_dom___default.a.findDOMNode(_this.root);
+            _this.rootNode.style.transform = transform;
         };
         return _this;
     }
@@ -9792,7 +9809,7 @@ var Demo = function (_Component) {
         value: function render() {
             var _this2 = this;
 
-            return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__src_index__["a" /* default */], { enablePinch: true, onTap: this.log('onTap'), onPress: this.log('onPress'), onDoubleTap: this.log('onDoubleTap'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['angle', 'direction']), onSwipeLeft: this.log('onSwipeLeft', ['angle', 'direction']), onSwipeRight: this.log('onSwipeRight', ['angle', 'direction']), onSwipeUp: this.log('onSwipeUp', ['angle', 'direction']), onSwipeDown: this.log('onSwipeDown', ['angle', 'direction']), onSwipeCancel: this.log('onSwipeCancel', ['angle', 'direction']), onPan: this.log('onPan'), onPanStart: this.log('onPanStart'), onPinch: this.log('onPinch', ['pinchLen', 'scale']), onPinchStart: this.log('onPinchStart', ['pinchLen', 'scale']), onPinchMove: this.log('onPinchMove', ['pinchLen', 'scale']), onPinchEnd: this.log('onPinchEnd', ['pinchLen', 'scale']), onPinchCancel: this.log('onPinchCancel', ['pinchLen', 'scale']) }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "inner", ref: function ref(el) {
+            return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__src_index__["a" /* default */], { enablePinch: true, enableRotate: true, onTap: this.log('onTap'), onPress: this.log('onPress'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['angle', 'direction']), onSwipeLeft: this.log('onSwipeLeft', ['angle', 'direction']), onSwipeRight: this.log('onSwipeRight', ['angle', 'direction']), onSwipeUp: this.log('onSwipeUp', ['angle', 'direction']), onSwipeDown: this.log('onSwipeDown', ['angle', 'direction']), onPan: this.log('onPan'), onPanStart: this.log('onPanStart'), onPinch: this.log('onPinch', ['pinchLen', 'scale']), onPinchStart: this.log('onPinchStart', ['pinchLen', 'scale']), onPinchMove: this.log('onPinchMove', ['pinchLen', 'scale']), onPinchEnd: this.log('onPinchEnd', ['pinchLen', 'scale']), onPinchCancel: this.log('onPinchCancel', ['pinchLen', 'scale']), onRotate: this.log('onRotate', ['rotation']), onRotateStart: this.log('onRotateStart', ['rotation']), onRotateMove: this.log('onRotateMove', ['rotation']), onRotateEnd: this.log('onRotateEnd', ['rotation']), onRotateCancel: this.log('onRotateCancel', ['rotation']) }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "inner", ref: function ref(el) {
                     _this2.root = el;
                 } }))));
         }
@@ -9826,6 +9843,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 
+;
+;
 
 var Gesture = function (_Component) {
     _inherits(Gesture, _Component);
@@ -9836,7 +9855,7 @@ var Gesture = function (_Component) {
         var _this = _possibleConstructorReturn(this, (Gesture.__proto__ || Object.getPrototypeOf(Gesture)).call(this, props));
 
         _this.state = {};
-        _this.callEvent = function (name) {
+        _this.triggerEvent = function (name) {
             for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
                 args[_key - 1] = arguments[_key];
             }
@@ -9847,55 +9866,27 @@ var Gesture = function (_Component) {
                 cb.apply(undefined, [_this.getGestureState()].concat(args));
             }
         };
-        _this.callCombineEvent = function (mainEventName, eventStatus) {
+        _this.triggerCombineEvent = function (mainEventName, eventStatus) {
             for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
                 args[_key2 - 2] = arguments[_key2];
             }
 
-            _this.callEvent.apply(_this, [mainEventName].concat(args));
+            _this.triggerEvent.apply(_this, [mainEventName].concat(args));
             if (eventStatus) {
                 var subEventName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["a" /* getEventName */])(mainEventName, eventStatus);
-                _this.callEvent.apply(_this, [subEventName].concat(args));
+                _this.triggerEvent.apply(_this, [subEventName].concat(args));
             }
         };
-        _this.updateGestureStatus = function (e) {
-            var _this$gesture = _this.gesture,
-                startTime = _this$gesture.startTime,
-                startX = _this$gesture.startX,
-                startY = _this$gesture.startY;
-            var _e$touches$ = e.touches[0],
-                pageX = _e$touches$.pageX,
-                pageY = _e$touches$.pageY;
-
-            var nowTime = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* now */])();
-            var deltaTime = nowTime - startTime;
-            var deltaX = pageX - startX;
-            var deltaY = pageY - startY;
-            var delta = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* calcTriangleDistance */])(deltaX, deltaY);
-            var velocity = delta / deltaTime;
-            _this.setGestureState({
-                /* update status snapshot */
-                time: nowTime,
-                x: pageX,
-                y: pageY,
-                /* update duration status */
-                deltaTime: deltaTime,
-                deltaX: deltaX,
-                deltaY: deltaY,
-                delta: delta,
-                velocity: velocity
-            });
-        };
-        _this.startPressTimer = function (e) {
-            _this.cancerPressTimer();
+        _this.initPressTimer = function () {
+            _this.cleanPressTimer();
             _this.pressTimer = setTimeout(function () {
                 _this.setGestureState({
                     press: true
                 });
-                _this.callEvent('onPress');
+                _this.triggerEvent('onPress');
             }, __WEBPACK_IMPORTED_MODULE_2__config__["a" /* PRESS */].time);
         };
-        _this.cancerPressTimer = function () {
+        _this.cleanPressTimer = function () {
             /* tslint:disable:no-unused-expression */
             _this.pressTimer && clearTimeout(_this.pressTimer);
         };
@@ -9914,232 +9905,208 @@ var Gesture = function (_Component) {
             }
         };
         _this.cleanGestureState = function () {
-            console.log('clean gesture state');
+            console.log('clean pre gesture state');
             delete _this.gesture;
         };
-        _this.initGestureStatus = function (e) {
-            // store the gesture state
-            var _e$touches$2 = e.touches[0],
-                pageX = _e$touches$2.pageX,
-                pageY = _e$touches$2.pageY;
-
-            var nowTime = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* now */])();
-            _this.setGestureState({
-                /* start status */
-                startTime: nowTime,
-                startX: pageX,
-                startY: pageY,
-                /* init prev status snapshot*/
-                time: nowTime,
-                x: pageX,
-                y: pageY
+        _this.getTouches = function (e) {
+            return Array.prototype.slice.call(e.touches).map(function (item) {
+                return {
+                    x: item.pageX,
+                    y: item.pageY
+                };
             });
-        };
-        _this.doDoubleTap = function () {
-            if (_this._prevTapSnaoshot) {
-                // check if double click
-                var _this$_prevTapSnaosho = _this._prevTapSnaoshot,
-                    startTime = _this$_prevTapSnaosho.startTime,
-                    startX = _this$_prevTapSnaosho.startX,
-                    startY = _this$_prevTapSnaosho.startY;
-                var _this$gesture2 = _this.gesture,
-                    time = _this$gesture2.time,
-                    x = _this$gesture2.x,
-                    y = _this$gesture2.y;
-
-                var doubleTap = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["d" /* shouldTriggerDoubleTap */])(time - startTime, x - startX, y - startY);
-                _this.setGestureState({
-                    doubleTap: doubleTap
-                });
-            }
         };
         _this._handleTouchStart = function (e) {
             console.log('touchstart');
-            // in case touchmove just trigger once
             e.preventDefault();
             _this.initGestureStatus(e);
-            _this.doDoubleTap();
-            _this.startMultiTouch(e);
-            _this.startPressTimer(e);
+            _this.initPressTimer();
+            _this.checkIfMultiTouchStart();
+        };
+        _this.initGestureStatus = function (e) {
+            _this.cleanGestureState();
+            // store the gesture start state
+            var startTouches = _this.getTouches(e);
+            var startTime = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* now */])();
+            var startMutliFingerStatus = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* calcMutliFingerStatus */])(startTouches);
+            _this.setGestureState({
+                startTime: startTime,
+                startTouches: startTouches,
+                startMutliFingerStatus: startMutliFingerStatus,
+                /* copy for next time touch move cala convenient*/
+                time: startTime,
+                touches: startTouches,
+                mutliFingerStatus: startMutliFingerStatus
+            });
+        };
+        _this.checkIfMultiTouchStart = function () {
+            var _this$props = _this.props,
+                enablePinch = _this$props.enablePinch,
+                enableRotate = _this$props.enableRotate;
+            var touches = _this.gesture.touches;
+
+            if (touches.length > 1 && (enablePinch || enableRotate)) {
+                if (enablePinch) {
+                    var startMutliFingerStatus = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* calcMutliFingerStatus */])(touches);
+                    _this.setGestureState({
+                        startMutliFingerStatus: startMutliFingerStatus,
+                        /* init pinch status */
+                        pinch: true,
+                        scale: 1
+                    });
+                    _this.triggerCombineEvent('onPinch', 'start');
+                }
+                if (enableRotate) {
+                    _this.setGestureState({
+                        /* init rotate status */
+                        rotate: true,
+                        rotation: 0
+                    });
+                    _this.triggerCombineEvent('onRotate', 'start');
+                }
+            }
         };
         _this._handleTouchMove = function (e) {
             console.log('touchmove');
             if (!_this.gesture) {
-                // sometimes: touchstart -> touchmove.... --> touchend --> touchmove --> touchend
+                // sometimes weird happen: touchstart -> touchmove..touchmove.. --> touchend --> touchmove --> touchend
                 // so we need to skip the unnormal event cycle after touchend
                 return;
             }
             // not a long press
-            _this.cancerPressTimer();
-            // not a double click
-            _this.setGestureState({
-                doubleTap: false
-            });
+            _this.cleanPressTimer();
             _this.updateGestureStatus(e);
-            _this.doMultiTouch(e, 'move');
+            _this.checkIfMultiTouchMove();
+        };
+        _this.checkIfMultiTouchMove = function () {
+            var _this$gesture = _this.gesture,
+                pinch = _this$gesture.pinch,
+                rotate = _this$gesture.rotate,
+                touches = _this$gesture.touches,
+                startMutliFingerStatus = _this$gesture.startMutliFingerStatus,
+                mutliFingerStatus = _this$gesture.mutliFingerStatus;
+
+            if (!pinch && !rotate) {
+                return;
+            }
+            if (touches.length < 2) {
+                _this.setGestureState({
+                    pinch: false,
+                    rotate: false
+                });
+                // Todo: 2 finger -> 1 finger, wait to test this situation
+                pinch && _this.triggerCombineEvent('onPinch', 'cancel');
+                rotate && _this.triggerCombineEvent('onRotate', 'cancel');
+                return;
+            }
+            if (pinch) {
+                var scale = mutliFingerStatus.z / startMutliFingerStatus.z;
+                _this.setGestureState({
+                    scale: scale
+                });
+                _this.triggerCombineEvent('onPinch', 'move');
+            }
+            if (rotate) {
+                var rotation = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["d" /* calcRotation */])(startMutliFingerStatus, mutliFingerStatus);
+                _this.setGestureState({
+                    rotation: rotation
+                });
+                _this.triggerCombineEvent('onRotate', 'move');
+            }
+        };
+        _this.checkIfMultiTouchEnd = function (status) {
+            var _this$gesture2 = _this.gesture,
+                pinch = _this$gesture2.pinch,
+                rotate = _this$gesture2.rotate;
+
+            if (pinch) {
+                _this.triggerCombineEvent('onPinch', status);
+            }
+            if (rotate) {
+                _this.triggerCombineEvent('onRotate', status);
+            }
+        };
+        _this.updateGestureStatus = function (e) {
+            var time = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["b" /* now */])();
+            _this.setGestureState({
+                time: time
+            });
+            if (!e.touches || !e.touches.length) {
+                return;
+            }
+            var _this$gesture3 = _this.gesture,
+                startTime = _this$gesture3.startTime,
+                startTouches = _this$gesture3.startTouches,
+                pinch = _this$gesture3.pinch,
+                rotate = _this$gesture3.rotate;
+
+            var touches = _this.getTouches(e);
+            var moveStatus = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["e" /* calcMoveStatus */])(startTouches, touches, time - startTime);
+            var mutliFingerStatus = void 0;
+            if (pinch || rotate) {
+                mutliFingerStatus = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["c" /* calcMutliFingerStatus */])(touches);
+            }
+            _this.setGestureState({
+                /* update status snapshot */
+                touches: touches,
+                mutliFingerStatus: mutliFingerStatus,
+                /* update duration status */
+                moveStatus: moveStatus
+            });
         };
         _this._handleTouchEnd = function (e) {
             console.log('touchend');
             if (!_this.gesture) {
                 return;
             }
-            _this.cancerPressTimer();
-            _this.doMultiTouch(e, 'end');
-            _this.doTapOrSwipe(e);
-            _this.cleanGestureState();
+            _this.cleanPressTimer();
+            _this.updateGestureStatus(e);
+            _this.checkIfMultiTouchEnd('end');
+            _this.checkIfEndWithTapOrSwipe();
         };
         _this._handleTouchCancel = function (e) {
-            // only if no touchMove, touchEnd, and prevent default, propgation in touchStart
+            // Todo: wait to test cancel case
             console.log('touchcancel');
             if (!_this.gesture) {
                 return;
             }
-            _this.cancerPressTimer();
+            _this.cleanPressTimer();
             _this.updateGestureStatus(e);
-            _this.doMultiTouch(e, 'cancel');
-            _this.cleanGestureState();
+            _this.checkIfMultiTouchEnd('cancel');
         };
-        _this.startMultiTouch = function (e) {
-            var _this$props = _this.props,
-                enablePinch = _this$props.enablePinch,
-                enableRotate = _this$props.enableRotate;
-
-            if (e.touches.length > 1 && (enablePinch || enableRotate)) {
-                if (enablePinch) {
-                    var _calcLenFromTouch = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["e" /* calcLenFromTouch */])(e.touches),
-                        pinchStartLenX = _calcLenFromTouch.x,
-                        pinchStartLenY = _calcLenFromTouch.y,
-                        pinchStartLen = _calcLenFromTouch.z;
-
-                    _this.setGestureState({
-                        pinch: true,
-                        pinchLen: pinchStartLen,
-                        pinchStartLenX: pinchStartLenX,
-                        pinchStartLenY: pinchStartLenY,
-                        pinchStartLen: pinchStartLen,
-                        scale: 1
-                    });
-                    _this.callCombineEvent('onPinch', 'start');
-                }
-                if (enableRotate) {
-                    _this.setGestureState({
-                        rotate: true,
-                        rotation: 0
-                    });
-                    _this.callCombineEvent('onRotate', 'start');
-                }
-            }
-        };
-        _this.doMultiTouch = function (e, status) {
-            var _this$props2 = _this.props,
-                enablePinch = _this$props2.enablePinch,
-                enableRotate = _this$props2.enableRotate;
-            var _this$gesture3 = _this.gesture,
-                pinchStartLen = _this$gesture3.pinchStartLen,
-                pinchStartLenX = _this$gesture3.pinchStartLenX,
-                pinchStartLenY = _this$gesture3.pinchStartLenY,
-                pinch = _this$gesture3.pinch,
-                rotate = _this$gesture3.rotate;
-
-            if (enablePinch || enableRotate) {
-                if (e.touches.length > 1) {
-                    var _calcLenFromTouch2 = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["e" /* calcLenFromTouch */])(e.touches),
-                        pinchLenX = _calcLenFromTouch2.x,
-                        pinchLenY = _calcLenFromTouch2.y,
-                        pinchLen = _calcLenFromTouch2.z;
-
-                    _this.setGestureState({
-                        pinchLen: pinchLen,
-                        pinchLenX: pinchLenX,
-                        pinchLenY: pinchLenY
-                    });
-                    if (enablePinch) {
-                        var scale = pinchLen / pinchStartLen;
-                        _this.setGestureState({
-                            scale: scale
-                        });
-                        _this.callCombineEvent('onPinch', status);
-                    }
-                    if (enableRotate) {
-                        var rotation = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["f" /* calcRotation */])({
-                            x: pinchLenX,
-                            y: pinchLenY,
-                            z: pinchLen
-                        }, {
-                            x: pinchStartLenX,
-                            y: pinchStartLenY,
-                            z: pinchStartLen
-                        });
-                        _this.setGestureState({
-                            rotation: rotation
-                        });
-                        _this.callCombineEvent('onRotate', status);
-                    }
-                }
-                if (status === 'end') {
-                    if (pinch) {
-                        _this.callCombineEvent('onPinch', status);
-                    }
-                    if (rotate) {
-                        _this.callCombineEvent('onRotate', status);
-                    }
-                }
-            }
-        };
-        _this.doTapOrSwipe = function (e) {
+        _this.checkIfEndWithTapOrSwipe = function () {
             var _this$gesture4 = _this.gesture,
-                velocity = _this$gesture4.velocity,
-                delta = _this$gesture4.delta,
-                doubleTap = _this$gesture4.doubleTap,
-                press = _this$gesture4.press,
-                startTime = _this$gesture4.startTime,
-                startX = _this$gesture4.startX,
-                startY = _this$gesture4.startY,
-                deltaX = _this$gesture4.deltaX,
-                deltaY = _this$gesture4.deltaY,
+                moveStatus = _this$gesture4.moveStatus,
                 pinch = _this$gesture4.pinch,
-                rotate = _this$gesture4.rotate;
+                rotate = _this$gesture4.rotate,
+                press = _this$gesture4.press;
 
             if (pinch || rotate) {
                 return;
             }
-            var swipe = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["g" /* shouldTriggerSwipe */])(delta, velocity);
-            var direction = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["h" /* getDirection */])(deltaX, deltaY);
-            _this.setGestureState({
-                swipe: swipe,
-                direction: direction
-            });
-            if (swipe) {
-                _this.doSwipe(e);
-            } else {
-                if (doubleTap) {
-                    _this.callEvent('onDoubleTap', e);
-                    delete _this._prevTapSnaoshot;
-                } else if (press) {
-                    _this.callEvent('onPressUp', e);
-                } else {
-                    _this.callEvent('onTap', e);
-                    _this._prevTapSnaoshot = {
-                        startTime: startTime,
-                        startX: startX,
-                        startY: startY
-                    };
+            if (moveStatus) {
+                var x = moveStatus.x,
+                    y = moveStatus.y,
+                    z = moveStatus.z,
+                    velocity = moveStatus.velocity;
+
+                var swipe = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["f" /* shouldTriggerSwipe */])(z, velocity);
+                var direction = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["g" /* getDirection */])(x, y);
+                _this.setGestureState({
+                    swipe: swipe,
+                    direction: direction
+                });
+                if (swipe) {
+                    var eventName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["h" /* getDirectionEventName */])(direction);
+                    _this.triggerCombineEvent('onSwipe', eventName);
+                    return;
                 }
             }
-        };
-        _this.doSwipe = function (e) {
-            var _this$gesture5 = _this.gesture,
-                deltaX = _this$gesture5.deltaX,
-                deltaY = _this$gesture5.deltaY;
-
-            var angle = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["i" /* calcSwipeAngle */])(deltaX, deltaY);
-            var direction = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["h" /* getDirection */])(deltaX, deltaY);
-            var eventName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1__util__["j" /* getDirectionEventName */])(direction);
-            _this.setGestureState({
-                angle: angle,
-                direction: direction
-            });
-            _this.callCombineEvent('onSwipe', eventName);
+            if (press) {
+                _this.triggerEvent('onPressUp');
+                return;
+            }
+            _this.triggerEvent('onTap');
         };
         return _this;
     }
@@ -10147,7 +10114,7 @@ var Gesture = function (_Component) {
     _createClass(Gesture, [{
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
-            this.cancerPressTimer();
+            this.cleanPressTimer();
         }
     }, {
         key: 'render',
@@ -10181,73 +10148,76 @@ Gesture.defaultProps = {
 
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["b"] = now;
-/* harmony export (immutable) */ __webpack_exports__["c"] = calcTriangleDistance;
-/* harmony export (immutable) */ __webpack_exports__["e"] = calcLenFromTouch;
-/* harmony export (immutable) */ __webpack_exports__["f"] = calcRotation;
+/* harmony export (immutable) */ __webpack_exports__["c"] = calcMutliFingerStatus;
+/* harmony export (immutable) */ __webpack_exports__["e"] = calcMoveStatus;
+/* harmony export (immutable) */ __webpack_exports__["d"] = calcRotation;
 /* harmony export (immutable) */ __webpack_exports__["a"] = getEventName;
-/* unused harmony export isInTapDelay */
-/* unused harmony export isInTapArea */
-/* harmony export (immutable) */ __webpack_exports__["d"] = shouldTriggerDoubleTap;
-/* harmony export (immutable) */ __webpack_exports__["g"] = shouldTriggerSwipe;
-/* harmony export (immutable) */ __webpack_exports__["i"] = calcSwipeAngle;
-/* harmony export (immutable) */ __webpack_exports__["h"] = getDirection;
-/* harmony export (immutable) */ __webpack_exports__["j"] = getDirectionEventName;
+/* harmony export (immutable) */ __webpack_exports__["f"] = shouldTriggerSwipe;
+/* harmony export (immutable) */ __webpack_exports__["g"] = getDirection;
+/* harmony export (immutable) */ __webpack_exports__["h"] = getDirectionEventName;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config__ = __webpack_require__(49);
 
+function _calcTriangleDistance(x, y) {
+    return Math.sqrt(x * x + y * y);
+}
+function _calcAngle(x, y) {
+    var radian = Math.atan2(y, x);
+    return 180 / (Math.PI / radian);
+}
 function now() {
     return Date.now();
 }
-function calcTriangleDistance(x, y) {
-    return Math.sqrt(x * x + y * y);
-}
-function calcDistanceFromPoint(x1, y1, x2, y2) {
-    var x = x2 - x1;
-    var y = y2 - y1;
+function calcMutliFingerStatus(touches) {
+    if (touches.length < 2) {
+        return;
+    }
+    var _touches$ = touches[0],
+        x1 = _touches$.x,
+        y1 = _touches$.y;
+    var _touches$2 = touches[1],
+        x2 = _touches$2.x,
+        y2 = _touches$2.y;
+
+    var deltaX = x2 - x1;
+    var deltaY = y2 - y1;
     return {
-        x: x,
-        y: y,
-        z: calcTriangleDistance(x, y)
+        x: deltaX,
+        y: deltaY,
+        z: _calcTriangleDistance(deltaX, deltaY),
+        angle: _calcAngle(deltaX, deltaY)
     };
 }
-function calcLenFromTouch(touches) {
-    return calcDistanceFromPoint(touches[0].pageX, touches[0].pageY, touches[1].pageX, touches[1].pageY);
-}
-function calcRotation(start, now) {
-    var startX = start.x,
-        startY = start.y,
-        startZ = start.z;
-    var x = now.x,
-        y = now.y,
-        z = now.z;
+function calcMoveStatus(startTouches, touches, time) {
+    var _startTouches$ = startTouches[0],
+        x1 = _startTouches$.x,
+        y1 = _startTouches$.y;
+    var _touches$3 = touches[0],
+        x2 = _touches$3.x,
+        y2 = _touches$3.y;
 
-    if (startZ === 0 || z === 0) {
-        return 0;
-    }
-    // https://en.wikipedia.org/wiki/Dot_product
-    var cosine = (startX * x + startY * y) / startZ * z;
-    if (cosine > 1) {
-        cosine = 1;
-    }
-    return Math.acos(cosine);
+    var deltaX = x2 - x1;
+    var deltaY = y2 - y1;
+    var deltaZ = _calcTriangleDistance(deltaX, deltaY);
+    return {
+        x: deltaX,
+        y: deltaY,
+        z: deltaZ,
+        time: time,
+        velocity: deltaZ / time,
+        angle: _calcAngle(deltaX, deltaY)
+    };
+}
+function calcRotation(startMutliFingerStatus, mutliFingerStatus) {
+    var startAngle = startMutliFingerStatus.angle;
+    var angle = mutliFingerStatus.angle;
+
+    return angle - startAngle;
 }
 function getEventName(prefix, status) {
     return prefix + status[0].toUpperCase() + status.slice(1);
 }
-function isInTapDelay(deltaTime) {
-    return deltaTime > 0 && deltaTime <= __WEBPACK_IMPORTED_MODULE_0__config__["b" /* TAP */].time;
-}
-function isInTapArea(deltaX, deltaY) {
-    return Math.abs(deltaX) < __WEBPACK_IMPORTED_MODULE_0__config__["b" /* TAP */].posThreshold && Math.abs(deltaY) < __WEBPACK_IMPORTED_MODULE_0__config__["b" /* TAP */].posThreshold;
-}
-function shouldTriggerDoubleTap(deltaTime, deltaX, deltaY) {
-    return isInTapDelay(deltaTime) && isInTapArea(deltaX, deltaY);
-}
 function shouldTriggerSwipe(delta, velocity) {
-    return Math.abs(delta) >= __WEBPACK_IMPORTED_MODULE_0__config__["c" /* SWIPE */].threshold && Math.abs(velocity) > __WEBPACK_IMPORTED_MODULE_0__config__["c" /* SWIPE */].velocity;
-}
-function calcSwipeAngle(x, y) {
-    var radian = Math.atan2(y, x);
-    return 180 / (Math.PI / radian);
+    return Math.abs(delta) >= __WEBPACK_IMPORTED_MODULE_0__config__["b" /* SWIPE */].threshold && Math.abs(velocity) > __WEBPACK_IMPORTED_MODULE_0__config__["b" /* SWIPE */].velocity;
 }
 /**
  * @private
@@ -10258,28 +10228,28 @@ function calcSwipeAngle(x, y) {
  */
 function getDirection(x, y) {
     if (x === y) {
-        return __WEBPACK_IMPORTED_MODULE_0__config__["d" /* DIRECTION_NONE */];
+        return __WEBPACK_IMPORTED_MODULE_0__config__["c" /* DIRECTION_NONE */];
     }
     if (Math.abs(x) >= Math.abs(y)) {
-        return x < 0 ? __WEBPACK_IMPORTED_MODULE_0__config__["e" /* DIRECTION_LEFT */] : __WEBPACK_IMPORTED_MODULE_0__config__["f" /* DIRECTION_RIGHT */];
+        return x < 0 ? __WEBPACK_IMPORTED_MODULE_0__config__["d" /* DIRECTION_LEFT */] : __WEBPACK_IMPORTED_MODULE_0__config__["e" /* DIRECTION_RIGHT */];
     }
-    return y < 0 ? __WEBPACK_IMPORTED_MODULE_0__config__["g" /* DIRECTION_UP */] : __WEBPACK_IMPORTED_MODULE_0__config__["h" /* DIRECTION_DOWN */];
+    return y < 0 ? __WEBPACK_IMPORTED_MODULE_0__config__["f" /* DIRECTION_UP */] : __WEBPACK_IMPORTED_MODULE_0__config__["g" /* DIRECTION_DOWN */];
 }
 function getDirectionEventName(direction) {
     var name = void 0;
     switch (direction) {
-        case __WEBPACK_IMPORTED_MODULE_0__config__["d" /* DIRECTION_NONE */]:
+        case __WEBPACK_IMPORTED_MODULE_0__config__["c" /* DIRECTION_NONE */]:
             break;
-        case __WEBPACK_IMPORTED_MODULE_0__config__["e" /* DIRECTION_LEFT */]:
+        case __WEBPACK_IMPORTED_MODULE_0__config__["d" /* DIRECTION_LEFT */]:
             name = 'left';
             break;
-        case __WEBPACK_IMPORTED_MODULE_0__config__["f" /* DIRECTION_RIGHT */]:
+        case __WEBPACK_IMPORTED_MODULE_0__config__["e" /* DIRECTION_RIGHT */]:
             name = 'right';
             break;
-        case __WEBPACK_IMPORTED_MODULE_0__config__["g" /* DIRECTION_UP */]:
+        case __WEBPACK_IMPORTED_MODULE_0__config__["f" /* DIRECTION_UP */]:
             name = 'up';
             break;
-        case __WEBPACK_IMPORTED_MODULE_0__config__["h" /* DIRECTION_DOWN */]:
+        case __WEBPACK_IMPORTED_MODULE_0__config__["g" /* DIRECTION_DOWN */]:
             name = 'down';
             break;
         default:

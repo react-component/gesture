@@ -269,7 +269,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     </div>
     <div class="example" id="__react-content"></div>
 
-    <div class="highlight"><pre><code language="js"><span class="hljs-comment">/* tslint:disable:no-console */</span>
+    <div class="highlight"><pre><code language="js"><span class="hljs-comment">/* tslint:disable:no-console no-unused-expression */</span>
 
 <span class="hljs-keyword">import</span> Gesture <span class="hljs-keyword">from</span> <span class="hljs-string">'../src/index'</span>;
 <span class="hljs-keyword">import</span> React, { Component } <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
@@ -294,20 +294,47 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 `</span>;
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Demo</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span>&lt;<span class="hljs-title">any</span>, <span class="hljs-title">any</span>&gt; </span>{
+  private root: any;
+  private rootNode: any;
+  private _scale: number;
+  private _rotation: number;
+
   constructor(props) {
     <span class="hljs-keyword">super</span>(props);
   }
-  log = (type, keys) =&gt; (...args) =&gt; {
-    <span class="hljs-built_in">console</span>.log(type, ...args);
+
+  log = (type: string, keys?: string[]) =&gt; (...args) =&gt; {
+    <span class="hljs-keyword">this</span>.doTapOrPress(type, keys, ...args);
+    <span class="hljs-keyword">this</span>.doTransform(type, ...args);
+  }
+  doTapOrPress = (type, keys, ...args) =&gt; {
+    <span class="hljs-keyword">if</span> ([<span class="hljs-string">'onTap'</span>, <span class="hljs-string">'onPress'</span>, <span class="hljs-string">'onPressUp'</span>].indexOf(type) === -<span class="hljs-number">1</span>) {
+      <span class="hljs-keyword">return</span>;
+    }
     <span class="hljs-keyword">const</span> extInfo = keys ? keys.map(key =&gt; <span class="hljs-string">`<span class="hljs-subst">${key}</span> = <span class="hljs-subst">${args[0][key]}</span>`</span>).join(<span class="hljs-string">', '</span>) : <span class="hljs-string">''</span>;
-    <span class="hljs-keyword">this</span>.refs.log.innerHTML += <span class="hljs-string">`&lt;p&gt;<span class="hljs-subst">${type}</span>: <span class="hljs-subst">${extInfo}</span>&lt;/p&gt;`</span>;
-    <span class="hljs-keyword">this</span>.refs.log.scrollTop = <span class="hljs-keyword">this</span>.refs.log.scrollHeight;
+    <span class="hljs-keyword">const</span> logEl = <span class="hljs-keyword">this</span>.refs.log <span class="hljs-keyword">as</span> any;
+    logEl.innerHTML += <span class="hljs-string">`&lt;p&gt;<span class="hljs-subst">${type}</span> <span class="hljs-subst">${extInfo}</span>&lt;/p&gt;`</span>;
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+  doTransform = (type, ...args) =&gt; {
     <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'onPinch'</span>) {
       <span class="hljs-keyword">const</span> { scale } = args[<span class="hljs-number">0</span>];
-      <span class="hljs-keyword">this</span>.rootNode = ReactDOM.findDOMNode(<span class="hljs-keyword">this</span>.root);
-      <span class="hljs-keyword">this</span>.rootNode.style.transform = <span class="hljs-string">`scale(<span class="hljs-subst">${scale}</span>)`</span>;
+      <span class="hljs-keyword">this</span>._scale = scale;
     }
+    <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'onRotate'</span>) {
+      <span class="hljs-keyword">const</span> { rotation }  = args[<span class="hljs-number">0</span>];
+      <span class="hljs-keyword">this</span>._rotation = rotation;
+    }
+    <span class="hljs-keyword">let</span> transform: any = [];
+    <span class="hljs-comment">// console.log(type, ...args);    let transform: any = [];</span>
+    <span class="hljs-keyword">this</span>._scale &amp;&amp; transform.push(<span class="hljs-string">`scale(<span class="hljs-subst">${this._scale}</span>)`</span>);
+    <span class="hljs-keyword">this</span>._rotation &amp;&amp; transform.push(<span class="hljs-string">`rotate(<span class="hljs-subst">${this._rotation}</span>deg)`</span>);
+
+    transform = transform.join(<span class="hljs-string">' '</span>);
+    <span class="hljs-keyword">this</span>.rootNode = ReactDOM.findDOMNode(<span class="hljs-keyword">this</span>.root);
+    <span class="hljs-keyword">this</span>.rootNode.style.transform = transform;
   }
+
   render() {
     <span class="hljs-keyword">return</span> (
       <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
@@ -316,16 +343,15 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
         &lt;<span class="hljs-tag">div</span> <span class="hljs-tag">className</span>="<span class="hljs-tag">outter</span>"&gt;
           &lt;<span class="hljs-tag">Gesture</span>
             <span class="hljs-tag">enablePinch</span>
+            <span class="hljs-tag">enableRotate</span>
             <span class="hljs-tag">onTap</span>=<span class="hljs-rules">{this.log('onTap')}</span>
             <span class="hljs-tag">onPress</span>=<span class="hljs-rules">{this.log('onPress')}</span>
-            <span class="hljs-tag">onDoubleTap</span>=<span class="hljs-rules">{this.log('onDoubleTap')}</span>
             <span class="hljs-tag">onPressUp</span>=<span class="hljs-rules">{this.log('onPressUp')}</span>
             <span class="hljs-tag">onSwipe</span>=<span class="hljs-rules">{this.log('onSwipe', ['angle', 'direction'])}</span>
             <span class="hljs-tag">onSwipeLeft</span> = <span class="hljs-rules">{this.log('onSwipeLeft', ['angle', 'direction'])}</span>
             <span class="hljs-tag">onSwipeRight</span> = <span class="hljs-rules">{this.log('onSwipeRight', ['angle', 'direction'])}</span>
             <span class="hljs-tag">onSwipeUp</span> = <span class="hljs-rules">{this.log('onSwipeUp', ['angle', 'direction'])}</span>
             <span class="hljs-tag">onSwipeDown</span> = <span class="hljs-rules">{this.log('onSwipeDown', ['angle', 'direction'])}</span>
-            <span class="hljs-tag">onSwipeCancel</span> = <span class="hljs-rules">{this.log('onSwipeCancel', ['angle', 'direction'])}</span>
             <span class="hljs-tag">onPan</span>=<span class="hljs-rules">{this.log('onPan')}</span>
             <span class="hljs-tag">onPanStart</span>=<span class="hljs-rules">{this.log('onPanStart')}</span>
             <span class="hljs-tag">onPinch</span>=<span class="hljs-rules">{this.log('onPinch', ['pinchLen', 'scale'])}</span>
@@ -333,6 +359,11 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
             <span class="hljs-tag">onPinchMove</span>=<span class="hljs-rules">{this.log('onPinchMove', ['pinchLen', 'scale'])}</span>
             <span class="hljs-tag">onPinchEnd</span>=<span class="hljs-rules">{this.log('onPinchEnd', ['pinchLen', 'scale'])}</span>
             <span class="hljs-tag">onPinchCancel</span>=<span class="hljs-rules">{this.log('onPinchCancel', ['pinchLen', 'scale'])}</span>
+            <span class="hljs-tag">onRotate</span>=<span class="hljs-rules">{this.log('onRotate', ['rotation'])}</span>
+            <span class="hljs-tag">onRotateStart</span>=<span class="hljs-rules">{this.log('onRotateStart', ['rotation'])}</span>
+            <span class="hljs-tag">onRotateMove</span>=<span class="hljs-rules">{this.log('onRotateMove', ['rotation'])}</span>
+            <span class="hljs-tag">onRotateEnd</span>=<span class="hljs-rules">{this.log('onRotateEnd', ['rotation'])}</span>
+            <span class="hljs-tag">onRotateCancel</span>=<span class="hljs-rules">{this.log('onRotateCancel', ['rotation'])}</span>
           &gt;
             &lt;<span class="hljs-tag">div</span> <span class="hljs-tag">className</span>="<span class="hljs-tag">inner</span>" <span class="hljs-tag">ref</span>=<span class="hljs-rules">{(el) =&gt; { this.root = el; }</span>}&gt;
             &lt;/<span class="hljs-tag">div</span>&gt;
