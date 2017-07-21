@@ -1,6 +1,6 @@
 {
   "name": "rc-gesture",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Support gesture for react component",
   "keywords": [
     "react",
@@ -23,15 +23,15 @@
     "dist"
   ],
   "license": "MIT",
-  "main": "./lib/index.js",
+  "main": "./lib/index",
   "module": "./es/index",
-  "entry": {
-    "rc-gesture": [
-      "./src/index.js"
-    ]
-  },
   "config": {
-    "port": 8005
+    "port": 8005,
+    "entry": {
+      "rc-gesture": [
+        "./src/index.tsx"
+      ]
+    }
   },
   "scripts": {
     "build": "rc-tools run build",
