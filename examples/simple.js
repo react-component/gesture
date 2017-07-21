@@ -9757,22 +9757,22 @@ var Demo = function (_Component) {
 
         _this.log = function (type, keys) {
             return function () {
+                var _console;
+
                 for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
                     args[_key] = arguments[_key];
                 }
 
-                _this.doTapOrPress.apply(_this, [type, keys].concat(args));
+                (_console = console).log.apply(_console, [type].concat(args));
+                _this.doLog.apply(_this, [type, keys].concat(args));
                 _this.doTransform.apply(_this, [type].concat(args));
             };
         };
-        _this.doTapOrPress = function (type, keys) {
+        _this.doLog = function (type, keys) {
             for (var _len2 = arguments.length, args = Array(_len2 > 2 ? _len2 - 2 : 0), _key2 = 2; _key2 < _len2; _key2++) {
                 args[_key2 - 2] = arguments[_key2];
             }
 
-            if (!/(press)|(tap)|(swipe)/i.test(type)) {
-                return;
-            }
             var extInfo = keys ? keys.map(function (key) {
                 return key + ' = ' + args[0][key];
             }).join(', ') : '';
@@ -9794,7 +9794,6 @@ var Demo = function (_Component) {
                 _this._rotation = rotation;
             }
             var transform = [];
-            // console.log(type, ...args);    let transform: any = [];
             _this._scale && transform.push('scale(' + _this._scale + ')');
             _this._rotation && transform.push('rotate(' + _this._rotation + 'deg)');
             transform = transform.join(' ');
@@ -9809,7 +9808,7 @@ var Demo = function (_Component) {
         value: function render() {
             var _this2 = this;
 
-            return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__src_index__["a" /* default */], { enablePinch: true, enableRotate: true, onTap: this.log('onTap'), onPress: this.log('onPress'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['angle', 'direction']), onSwipeLeft: this.log('onSwipeLeft', ['angle', 'direction']), onSwipeRight: this.log('onSwipeRight', ['angle', 'direction']), onSwipeUp: this.log('onSwipeUp', ['angle', 'direction']), onSwipeDown: this.log('onSwipeDown', ['angle', 'direction']), onPan: this.log('onPan'), onPanStart: this.log('onPanStart'), onPinch: this.log('onPinch', ['pinchLen', 'scale']), onPinchStart: this.log('onPinchStart', ['pinchLen', 'scale']), onPinchMove: this.log('onPinchMove', ['pinchLen', 'scale']), onPinchEnd: this.log('onPinchEnd', ['pinchLen', 'scale']), onPinchCancel: this.log('onPinchCancel', ['pinchLen', 'scale']), onRotate: this.log('onRotate', ['rotation']), onRotateStart: this.log('onRotateStart', ['rotation']), onRotateMove: this.log('onRotateMove', ['rotation']), onRotateEnd: this.log('onRotateEnd', ['rotation']), onRotateCancel: this.log('onRotateCancel', ['rotation']) }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "inner", ref: function ref(el) {
+            return __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_0__src_index__["a" /* default */], { enablePinch: true, enableRotate: true, onTap: this.log('onTap'), onPress: this.log('onPress'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['direction']), onSwipeLeft: this.log('onSwipeLeft', ['direction']), onSwipeRight: this.log('onSwipeRight', ['direction']), onSwipeUp: this.log('onSwipeUp', ['direction']), onSwipeDown: this.log('onSwipeDown', ['direction']), onPinch: this.log('onPinch', ['scale']), onPinchStart: this.log('onPinchStart', ['scale']), onPinchMove: this.log('onPinchMove', ['scale']), onPinchEnd: this.log('onPinchEnd', ['scale']), onPinchCancel: this.log('onPinchCancel', ['scale']), onRotate: this.log('onRotate', ['rotation']), onRotateStart: this.log('onRotateStart', ['rotation']), onRotateMove: this.log('onRotateMove', ['rotation']), onRotateEnd: this.log('onRotateEnd', ['rotation']), onRotateCancel: this.log('onRotateCancel', ['rotation']) }, __WEBPACK_IMPORTED_MODULE_1_react___default.a.createElement("div", { className: "inner", ref: function ref(el) {
                     _this2.root = el;
                 } }))));
         }
