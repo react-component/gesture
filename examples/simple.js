@@ -9770,7 +9770,7 @@ var Demo = function (_Component) {
                 args[_key2 - 2] = arguments[_key2];
             }
 
-            if (!/(press)|(tap)/i.test(type)) {
+            if (!/(press)|(tap)|(swipe)/i.test(type)) {
                 return;
             }
             var extInfo = keys ? keys.map(function (key) {
