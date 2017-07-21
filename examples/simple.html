@@ -308,7 +308,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
     <span class="hljs-keyword">this</span>.doTransform(type, ...args);
   }
   doTapOrPress = (type, keys, ...args) =&gt; {
-    <span class="hljs-keyword">if</span> ([<span class="hljs-string">'onTap'</span>, <span class="hljs-string">'onPress'</span>, <span class="hljs-string">'onPressUp'</span>].indexOf(type) === -<span class="hljs-number">1</span>) {
+    <span class="hljs-keyword">if</span> (!<span class="hljs-regexp">/(press)|(tap)/i</span>.test(type)) {
       <span class="hljs-keyword">return</span>;
     }
     <span class="hljs-keyword">const</span> extInfo = keys ? keys.map(key =&gt; <span class="hljs-string">`<span class="hljs-subst">${key}</span> = <span class="hljs-subst">${args[0][key]}</span>`</span>).join(<span class="hljs-string">', '</span>) : <span class="hljs-string">''</span>;

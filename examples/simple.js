@@ -9770,7 +9770,7 @@ var Demo = function (_Component) {
                 args[_key2 - 2] = arguments[_key2];
             }
 
-            if (['onTap', 'onPress', 'onPressUp'].indexOf(type) === -1) {
+            if (!/(press)|(tap)/i.test(type)) {
                 return;
             }
             var extInfo = keys ? keys.map(function (key) {
