@@ -9764,8 +9764,10 @@ var Demo = function (_Component) {
                 }
 
                 (_console = console).log.apply(_console, [type].concat(args));
-                _this.doLog.apply(_this, [type, keys].concat(args));
-                _this.doTransform.apply(_this, [type].concat(args));
+                window.requestAnimationFrame(function () {
+                    _this.doLog.apply(_this, [type, keys].concat(args));
+                    _this.doTransform.apply(_this, [type].concat(args));
+                });
             };
         };
         _this.doLog = function (type, keys) {
