@@ -55,7 +55,7 @@ container);
 
 ## API
 
-all callback funtion will one parammeter: `(gesture) => {}`
+all callback funtion will one parammeter: `type GestureHandler = (s: IGestureStauts) => void;`
 
 - gesture: the rc-gesture state object, container all information you may need, see [gesture](#gesture)
 
@@ -136,7 +136,7 @@ all callback funtion will one parammeter: `(gesture) => {}`
     </tbody>
 </table>
 
-#### Pan (**Unsupported Yet*)
+#### Pan (**Unsupported Yet**)
 <table class="table table-bordered table-striped">
     <thead>
     <tr>
@@ -288,6 +288,41 @@ pinch gesture is not enabled by default, you must set `props.enableRotate = true
 </table>
 
 ## gesture
+
+```tsx
+// http://hammerjs.github.io/api/#event-object
+export interface IGestureStauts {
+    /* start status snapshot */
+    startTime: number;
+    startTouches: Finger[];
+
+    startMutliFingerStatus?: MultiFingerStatus[];
+
+    /* now status snapshot */
+    time: number;
+    touches: Finger[];
+
+    mutliFingerStatus?: MultiFingerStatus[];
+
+    /* delta status from touchstart to now, just for singe finger */
+    moveStatus?: SingeFingerMoveStatus;
+
+    /* whether is a long tap */
+    press?: boolean;
+
+    /* whether is a swipe*/
+    swipe?: boolean;
+    direction?: number;
+
+    /* whether is in pinch process */
+    pinch?: boolean;
+    scale?: number;
+
+    /* whether is in rotate process */
+    rotate?: boolean;
+    rotation?: number; // Rotation (in deg) that has been done when multi-touch. 0 on a single touch.
+};
+```
 
 ## Development
 
