@@ -769,7 +769,7 @@ ReactDOM.render(
   &gt;
     <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>container<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-title">Gesture</span>&gt;</span>,
-container);</code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><p>all callback funtion will one parammeter: <code>(gesture) =&gt; {}</code></p>
+container);</code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><p>all callback funtion will one parammeter: <code>type GestureHandler = (s: IGestureStauts) =&gt; void;</code></p>
 <ul>
 <li>gesture: the rc-gesture state object, container all information you may need, see <a href="#gesture" title="gesture">gesture</a></li>
 </ul>
@@ -846,7 +846,7 @@ container);</code></pre></div><h2>API<a id="user-content-api" name="api" class="
     </tbody>
 </table>
 
-<h4>Pan (<em>*Unsupported Yet</em>)<a id="user-content-pan-(<em>*unsupported-yet</em>)" name="pan-(<em>*unsupported-yet</em>)" class="anchor" aria-hidden="true" href="#pan-(<em>*unsupported-yet</em>)"><span class="octicon octicon-link"></span></a></h4><table class="table table-bordered table-striped">
+<h4>Pan (<strong>Unsupported Yet</strong>)<a id="user-content-pan-(<strong>unsupported-yet</strong>)" name="pan-(<strong>unsupported-yet</strong>)" class="anchor" aria-hidden="true" href="#pan-(<strong>unsupported-yet</strong>)"><span class="octicon octicon-link"></span></a></h4><table class="table table-bordered table-striped">
     <thead>
     <tr>
         <th style="width: 100px;">name</th>
@@ -990,7 +990,38 @@ container);</code></pre></div><h2>API<a id="user-content-api" name="api" class="
     </tbody>
 </table>
 
-<h2>gesture<a id="user-content-gesture" name="gesture" class="anchor" aria-hidden="true" href="#gesture"><span class="octicon octicon-link"></span></a></h2><h2>Development<a id="user-content-development" name="development" class="anchor" aria-hidden="true" href="#development"><span class="octicon octicon-link"></span></a></h2><div class="highlight"><pre><code language="undefined">npm install
+<h2>gesture<a id="user-content-gesture" name="gesture" class="anchor" aria-hidden="true" href="#gesture"><span class="octicon octicon-link"></span></a></h2><div class="highlight"><pre><code language="js"><span class="hljs-comment">// http://hammerjs.github.io/api/#event-object</span>
+<span class="hljs-keyword">export</span> interface IGestureStauts {
+    <span class="hljs-comment">/* start status snapshot */</span>
+    startTime: number;
+    startTouches: Finger[];
+
+    startMutliFingerStatus?: MultiFingerStatus[];
+
+    <span class="hljs-comment">/* now status snapshot */</span>
+    time: number;
+    touches: Finger[];
+
+    mutliFingerStatus?: MultiFingerStatus[];
+
+    <span class="hljs-comment">/* delta status from touchstart to now, just for singe finger */</span>
+    moveStatus?: SingeFingerMoveStatus;
+
+    <span class="hljs-comment">/* whether is a long tap */</span>
+    press?: boolean;
+
+    <span class="hljs-comment">/* whether is a swipe*/</span>
+    swipe?: boolean;
+    direction?: number;
+
+    <span class="hljs-comment">/* whether is in pinch process */</span>
+    pinch?: boolean;
+    scale?: number;
+
+    <span class="hljs-comment">/* whether is in rotate process */</span>
+    rotate?: boolean;
+    rotation?: number; <span class="hljs-comment">// Rotation (in deg) that has been done when multi-touch. 0 on a single touch.</span>
+};</code></pre></div><h2>Development<a id="user-content-development" name="development" class="anchor" aria-hidden="true" href="#development"><span class="octicon octicon-link"></span></a></h2><div class="highlight"><pre><code language="undefined">npm install
 npm start</code></pre></div><h2>Example<a id="user-content-example" name="example" class="anchor" aria-hidden="true" href="#example"><span class="octicon octicon-link"></span></a></h2><p><code>npm start</code> and then go to <code>http://localhost:8005/examples/</code></p>
 <p>Online examples: <a href="http://react-component.github.io/gesture/" title="null">http://react-component.github.io/gesture/</a></p>
 <h2>Test Case<a id="user-content-test-case" name="test-case" class="anchor" aria-hidden="true" href="#test-case"><span class="octicon octicon-link"></span></a></h2><p><code>http://localhost:8005/tests/runner.html?coverage</code></p>
