@@ -33,13 +33,11 @@ class Demo extends Component<any, any> {
   }
 
   log = (type: string, keys?: string[]) => (...args) => {
-    this.doTapOrPress(type, keys, ...args);
+    console.log(type, ...args);
+    this.doLog(type, keys, ...args);
     this.doTransform(type, ...args);
   }
-  doTapOrPress = (type, keys, ...args) => {
-    if (['onTap', 'onPress', 'onPressUp'].indexOf(type) === -1) {
-      return;
-    }
+  doLog = (type, keys, ...args) => {
     const extInfo = keys ? keys.map(key => `${key} = ${args[0][key]}`).join(', ') : '';
     const logEl = this.refs.log as any;
     logEl.innerHTML += `<p>${type} ${extInfo}</p>`;
@@ -55,7 +53,6 @@ class Demo extends Component<any, any> {
       this._rotation = rotation;
     }
     let transform: any = [];
-    // console.log(type, ...args);    let transform: any = [];
     this._scale && transform.push(`scale(${this._scale})`);
     this._rotation && transform.push(`rotate(${this._rotation}deg)`);
 
@@ -76,18 +73,16 @@ class Demo extends Component<any, any> {
             onTap={this.log('onTap')}
             onPress={this.log('onPress')}
             onPressUp={this.log('onPressUp')}
-            onSwipe={this.log('onSwipe', ['angle', 'direction'])}
-            onSwipeLeft = {this.log('onSwipeLeft', ['angle', 'direction'])}
-            onSwipeRight = {this.log('onSwipeRight', ['angle', 'direction'])}
-            onSwipeUp = {this.log('onSwipeUp', ['angle', 'direction'])}
-            onSwipeDown = {this.log('onSwipeDown', ['angle', 'direction'])}
-            onPan={this.log('onPan')}
-            onPanStart={this.log('onPanStart')}
-            onPinch={this.log('onPinch', ['pinchLen', 'scale'])}
-            onPinchStart={this.log('onPinchStart', ['pinchLen', 'scale'])}
-            onPinchMove={this.log('onPinchMove', ['pinchLen', 'scale'])}
-            onPinchEnd={this.log('onPinchEnd', ['pinchLen', 'scale'])}
-            onPinchCancel={this.log('onPinchCancel', ['pinchLen', 'scale'])}
+            onSwipe={this.log('onSwipe', ['direction'])}
+            onSwipeLeft = {this.log('onSwipeLeft', ['direction'])}
+            onSwipeRight = {this.log('onSwipeRight', ['direction'])}
+            onSwipeUp = {this.log('onSwipeUp', ['direction'])}
+            onSwipeDown = {this.log('onSwipeDown', ['direction'])}
+            onPinch={this.log('onPinch', ['scale'])}
+            onPinchStart={this.log('onPinchStart', ['scale'])}
+            onPinchMove={this.log('onPinchMove', ['scale'])}
+            onPinchEnd={this.log('onPinchEnd', ['scale'])}
+            onPinchCancel={this.log('onPinchCancel', ['scale'])}
             onRotate={this.log('onRotate', ['rotation'])}
             onRotateStart={this.log('onRotateStart', ['rotation'])}
             onRotateMove={this.log('onRotateMove', ['rotation'])}
