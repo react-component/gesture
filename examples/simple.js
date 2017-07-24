@@ -10560,7 +10560,7 @@ var Demo = function (_Component) {
         value: function render() {
             var _this2 = this;
 
-            return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__src_index__["a" /* default */], { enablePinch: true, enableRotate: true, onTap: this.log('onTap'), onPress: this.log('onPress'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['direction']), onSwipeLeft: this.log('onSwipeLeft', ['direction']), onSwipeRight: this.log('onSwipeRight', ['direction']), onSwipeUp: this.log('onSwipeUp', ['direction']), onSwipeDown: this.log('onSwipeDown', ['direction']), onPinch: this.log('onPinch', ['scale']), onPinchStart: this.log('onPinchStart', ['scale']), onPinchMove: this.log('onPinchMove', ['scale']), onPinchEnd: this.log('onPinchEnd', ['scale']), onPinchCancel: this.log('onPinchCancel', ['scale']), onRotate: this.log('onRotate', ['rotation']), onRotateStart: this.log('onRotateStart', ['rotation']), onRotateMove: this.log('onRotateMove', ['rotation']), onRotateEnd: this.log('onRotateEnd', ['rotation']), onRotateCancel: this.log('onRotateCancel', ['rotation']) }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "inner", ref: function ref(el) {
+            return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__src_index__["a" /* default */], { enablePinch: true, enableRotate: true, onTap: this.log('onTap'), onPress: this.log('onPress'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['direction']), onSwipeLeft: this.log('onSwipeLeft', ['direction']), onSwipeRight: this.log('onSwipeRight', ['direction']), onSwipeUp: this.log('onSwipeUp', ['direction']), onSwipeDown: this.log('onSwipeDown', ['direction']), onPinch: this.log('onPinch', ['scale']), onPinchStart: this.log('onPinchStart', ['scale']), onPinchMove: this.log('onPinchMove', ['scale']), onPinchEnd: this.log('onPinchEnd', ['scale']), onPinchCancel: this.log('onPinchCancel', ['scale']), onPinchIn: this.log('onPinchIn', ['scale']), onPinchOut: this.log('onPinchOut', ['scale']), onRotate: this.log('onRotate', ['rotation']), onRotateStart: this.log('onRotateStart', ['rotation']), onRotateMove: this.log('onRotateMove', ['rotation']), onRotateEnd: this.log('onRotateEnd', ['rotation']), onRotateCancel: this.log('onRotateCancel', ['rotation']) }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "inner", ref: function ref(el) {
                     _this2.root = el;
                 } }))));
         }
@@ -10632,6 +10632,23 @@ var Gesture = function (_Component) {
                 var subEventName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["a" /* getEventName */])(mainEventName, eventStatus);
                 _this.triggerEvent.apply(_this, [subEventName].concat(args));
             }
+        };
+        _this.triggerPinchEvent = function (mainEventName, eventStatus) {
+            for (var _len3 = arguments.length, args = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) {
+                args[_key3 - 2] = arguments[_key3];
+            }
+
+            var scale = _this.gesture.scale;
+
+            if (eventStatus === 'move' && typeof scale === 'number') {
+                if (scale > 1) {
+                    _this.triggerEvent('onPinchOut');
+                }
+                if (scale < 1) {
+                    _this.triggerEvent('onPinchIn');
+                }
+            }
+            _this.triggerCombineEvent.apply(_this, [mainEventName, eventStatus].concat(args));
         };
         _this.initPressTimer = function () {
             _this.cleanPressTimer();
@@ -10760,7 +10777,7 @@ var Gesture = function (_Component) {
                 _this.setGestureState({
                     scale: scale
                 });
-                _this.triggerCombineEvent('onPinch', 'move');
+                _this.triggerPinchEvent('onPinch', 'move');
             }
             if (rotate) {
                 var rotation = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["d" /* calcRotation */])(startMutliFingerStatus, mutliFingerStatus);
