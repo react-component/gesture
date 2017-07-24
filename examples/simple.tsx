@@ -85,6 +85,8 @@ class Demo extends Component<any, any> {
             onPinchMove={this.log('onPinchMove', ['scale'])}
             onPinchEnd={this.log('onPinchEnd', ['scale'])}
             onPinchCancel={this.log('onPinchCancel', ['scale'])}
+            onPinchIn={this.log('onPinchIn', ['scale'])}
+            onPinchOut={this.log('onPinchOut', ['scale'])}
             onRotate={this.log('onRotate', ['rotation'])}
             onRotateStart={this.log('onRotateStart', ['rotation'])}
             onRotateMove={this.log('onRotateMove', ['rotation'])}

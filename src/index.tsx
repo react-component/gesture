@@ -43,6 +43,8 @@ export interface IGesture {
   onPinchMove?: GestureHandler;
   onPinchEnd?: GestureHandler;
   onPinchCancel?: GestureHandler;
+  onPinchIn?: GestureHandler;
+  onPinchOut?: GestureHandler;
 
   // rotate: s.angle
   onRotate?: GestureHandler;
@@ -136,6 +138,18 @@ export default class Gesture extends Component<IGesture, any> {
       const subEventName = getEventName(mainEventName, eventStatus);
       this.triggerEvent(subEventName, ...args);
     }
+  }
+  triggerPinchEvent = (mainEventName, eventStatus, ...args) => {
+    const { scale } = this.gesture;
+    if (eventStatus === 'move' && typeof scale === 'number') {
+      if (scale > 1) {
+        this.triggerEvent('onPinchOut');
+      }
+      if (scale < 1) {
+        this.triggerEvent('onPinchIn');
+      }
+    }
+    this.triggerCombineEvent(mainEventName, eventStatus, ...args);
   }
   initPressTimer = () => {
     this.cleanPressTimer();
@@ -265,7 +279,7 @@ export default class Gesture extends Component<IGesture, any> {
       this.setGestureState({
         scale,
       });
-      this.triggerCombineEvent('onPinch', 'move');
+      this.triggerPinchEvent('onPinch', 'move');
     }
     if (rotate) {
       const rotation = calcRotation(startMutliFingerStatus, mutliFingerStatus);

@@ -55,9 +55,9 @@ container);
 
 ## API
 
-all callback funtion will one parammeter: `type GestureHandler = (s: IGestureStauts) => void;`
+all callback funtion will have one parammeter: `type GestureHandler = (s: IGestureStauts) => void;`
 
-- gesture: the rc-gesture state object, container all information you may need, see [gesture](#gesture)
+- gesture: the rc-gesture state object, which contain all information you may need, see [gesture](#gesture)
 
 ### props:
 
