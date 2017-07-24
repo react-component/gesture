@@ -1,6 +1,9 @@
 # History
 ----
 
+## 0.0.3 / 2017-07-24
+
+Support onPinchIn, onPinchOut.
 
 ## 0.0.2 / 2017-07-21
 
