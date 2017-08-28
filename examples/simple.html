@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>simple.js - example - rc-gesture@0.0.3</title>
+  <title>simple.js - example - rc-gesture@0.0.4</title>
   <meta name="viewport"
         content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <meta charset="utf-8"/>
@@ -263,7 +263,7 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
 <body>
   <div class="container">
     <div class="header">
-      <h1>rc-gesture@0.0.3</h1>
+      <h1>rc-gesture@0.0.4</h1>
 
       <p>Support gesture for react component</p>
     </div>
@@ -298,6 +298,8 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
   private rootNode: any;
   private _scale: number;
   private _rotation: number;
+  private _x: number;
+  private _y: number;
 
   constructor(props) {
     <span class="hljs-keyword">super</span>(props);
@@ -325,11 +327,23 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
       <span class="hljs-keyword">const</span> { rotation }  = args[<span class="hljs-number">0</span>];
       <span class="hljs-keyword">this</span>._rotation = rotation;
     }
+    <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'onPanMove'</span>) {
+      <span class="hljs-keyword">const</span> { x, y } = args[<span class="hljs-number">0</span>].moveStatus;
+      <span class="hljs-keyword">this</span>._x = x;
+      <span class="hljs-keyword">this</span>._y = y;
+    }
+    <span class="hljs-keyword">if</span> (type === <span class="hljs-string">'onPanEnd'</span> || type === <span class="hljs-string">'onPanCancel'</span>) {
+      <span class="hljs-keyword">const</span> { x, y } = args[<span class="hljs-number">0</span>].moveStatus;
+      <span class="hljs-keyword">this</span>._x = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">this</span>._y = <span class="hljs-number">0</span>;
+    }
     <span class="hljs-keyword">let</span> transform: any = [];
     <span class="hljs-keyword">this</span>._scale &amp;&amp; transform.push(<span class="hljs-string">`scale(<span class="hljs-subst">${this._scale}</span>)`</span>);
     <span class="hljs-keyword">this</span>._rotation &amp;&amp; transform.push(<span class="hljs-string">`rotate(<span class="hljs-subst">${this._rotation}</span>deg)`</span>);
-
+    <span class="hljs-keyword">typeof</span> <span class="hljs-keyword">this</span>._x === <span class="hljs-string">'number'</span> &amp;&amp; transform.push(<span class="hljs-string">`translateX(<span class="hljs-subst">${this._x}</span>px)`</span>);
+    <span class="hljs-keyword">typeof</span> <span class="hljs-keyword">this</span>._y === <span class="hljs-string">'number'</span> &amp;&amp; transform.push(<span class="hljs-string">`translateY(<span class="hljs-subst">${this._y}</span>px)`</span>);
     transform = transform.join(<span class="hljs-string">' '</span>);
+    <span class="hljs-built_in">console</span>.error(transform);
     <span class="hljs-keyword">this</span>.rootNode = ReactDOM.findDOMNode(<span class="hljs-keyword">this</span>.root);
     <span class="hljs-keyword">this</span>.rootNode.style.transform = transform;
   }
@@ -363,6 +377,15 @@ Monokai Sublime style. Derived from Monokai by noformnocontent http://nn.mit-lic
             <span class="hljs-tag">onRotateMove</span>=<span class="hljs-rules">{this.log('onRotateMove', ['rotation'])}</span>
             <span class="hljs-tag">onRotateEnd</span>=<span class="hljs-rules">{this.log('onRotateEnd', ['rotation'])}</span>
             <span class="hljs-tag">onRotateCancel</span>=<span class="hljs-rules">{this.log('onRotateCancel', ['rotation'])}</span>
+            <span class="hljs-tag">onPan</span>=<span class="hljs-rules">{this.log('onPan', ['moveStatus', 'direction'])}</span>
+            <span class="hljs-tag">onPanStart</span>=<span class="hljs-rules">{this.log('onPanStart', ['moveStatus', 'direction'])}</span>
+            <span class="hljs-tag">onPanMove</span>=<span class="hljs-rules">{this.log('onPanMove', ['moveStatus', 'direction'])}</span>
+            <span class="hljs-tag">onPanEnd</span>=<span class="hljs-rules">{this.log('onPanEnd', ['moveStatus', 'direction'])}</span>
+            <span class="hljs-tag">onPanCancel</span>=<span class="hljs-rules">{this.log('onPanCancel', ['moveStatus', 'direction'])}</span>
+            <span class="hljs-tag">onPanLeft</span>=<span class="hljs-rules">{this.log('onPanLeft', ['moveStatus', 'direction'])}</span>
+            <span class="hljs-tag">onPanRight</span>=<span class="hljs-rules">{this.log('onPanRight', ['moveStatus', 'direction'])}</span>
+            <span class="hljs-tag">onPanUp</span>=<span class="hljs-rules">{this.log('onPanUp', ['moveStatus', 'direction'])}</span>
+            <span class="hljs-tag">onPanDown</span>=<span class="hljs-rules">{this.log('onPanDown', ['moveStatus', 'direction'])}</span>
           &gt;
             &lt;<span class="hljs-tag">div</span> <span class="hljs-tag">className</span>="<span class="hljs-tag">inner</span>" <span class="hljs-tag">ref</span>=<span class="hljs-rules">{(el) =&gt; { this.root = el; }</span>}&gt;
             &lt;/<span class="hljs-tag">div</span>&gt;
