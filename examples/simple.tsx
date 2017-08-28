@@ -27,6 +27,8 @@ class Demo extends Component<any, any> {
   private rootNode: any;
   private _scale: number;
   private _rotation: number;
+  private _x: number;
+  private _y: number;
 
   constructor(props) {
     super(props);
@@ -54,11 +56,23 @@ class Demo extends Component<any, any> {
       const { rotation }  = args[0];
       this._rotation = rotation;
     }
+    if (type === 'onPanMove') {
+      const { x, y } = args[0].moveStatus;
+      this._x = x;
+      this._y = y;
+    }
+    if (type === 'onPanEnd' || type === 'onPanCancel') {
+      const { x, y } = args[0].moveStatus;
+      this._x = 0;
+      this._y = 0;
+    }
     let transform: any = [];
     this._scale && transform.push(`scale(${this._scale})`);
     this._rotation && transform.push(`rotate(${this._rotation}deg)`);
-
+    typeof this._x === 'number' && transform.push(`translateX(${this._x}px)`);
+    typeof this._y === 'number' && transform.push(`translateY(${this._y}px)`);
     transform = transform.join(' ');
+    console.error(transform);
     this.rootNode = ReactDOM.findDOMNode(this.root);
     this.rootNode.style.transform = transform;
   }
@@ -92,6 +106,15 @@ class Demo extends Component<any, any> {
             onRotateMove={this.log('onRotateMove', ['rotation'])}
             onRotateEnd={this.log('onRotateEnd', ['rotation'])}
             onRotateCancel={this.log('onRotateCancel', ['rotation'])}
+            onPan={this.log('onPan', ['moveStatus', 'direction'])}
+            onPanStart={this.log('onPanStart', ['moveStatus', 'direction'])}
+            onPanMove={this.log('onPanMove', ['moveStatus', 'direction'])}
+            onPanEnd={this.log('onPanEnd', ['moveStatus', 'direction'])}
+            onPanCancel={this.log('onPanCancel', ['moveStatus', 'direction'])}
+            onPanLeft={this.log('onPanLeft', ['moveStatus', 'direction'])}
+            onPanRight={this.log('onPanRight', ['moveStatus', 'direction'])}
+            onPanUp={this.log('onPanUp', ['moveStatus', 'direction'])}
+            onPanDown={this.log('onPanDown', ['moveStatus', 'direction'])}
           >
             <div className="inner" ref={(el) => { this.root = el; }}>
             </div>

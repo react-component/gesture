@@ -136,7 +136,7 @@ all callback funtion will have one parammeter: `type GestureHandler = (s: IGestu
     </tbody>
 </table>
 
-#### Pan (**Unsupported Yet**)
+#### Pan
 <table class="table table-bordered table-striped">
     <thead>
     <tr>
@@ -176,6 +176,30 @@ all callback funtion will have one parammeter: `type GestureHandler = (s: IGestu
           <td>function</td>
           <th></th>
           <td>drag cancel callback</td>
+      </tr>
+      <tr>
+          <td>onPanLeft</td>
+          <td>function</td>
+          <th></th>
+          <td>pan left callback</td>
+      </tr>
+      <tr>
+          <td>onPanRight</td>
+          <td>function</td>
+          <th></th>
+          <td>pan right callback</td>
+      </tr>
+      <tr>
+          <td>onPanTop</td>
+          <td>function</td>
+          <th></th>
+          <td>pan top callback</td>
+      </tr>
+      <tr>
+          <td>onPanBottom</td>
+          <td>function</td>
+          <th></th>
+          <td>pan bottom callback</td>
       </tr>
     </tbody>
 </table>

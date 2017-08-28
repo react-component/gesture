@@ -59,6 +59,10 @@ export interface IGesture {
   onPanMove?: GestureHandler;
   onPanEnd?: GestureHandler;
   onPanCancel?: GestureHandler;
+  onPanLeft?: GestureHandler;
+  onPanRight?: GestureHandler;
+  onPanUp?: GestureHandler;
+  onPanDown?: GestureHandler;
 
   // tap
   onTap?: GestureHandler;
@@ -95,6 +99,9 @@ export interface IGestureStauts {
     /* whether is a long tap */
     press?: boolean;
 
+    /* whether is a pan */
+    pan?: boolean;
+
     /* whether is a swipe*/
     swipe?: boolean;
     direction?: number;
@@ -126,6 +133,7 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   triggerEvent = (name, ...args) => {
+    console.log(name, ...args);
     const cb = this.props[name];
     if (typeof cb === 'function') {
       // always give user gesture object as first params first
@@ -134,6 +142,10 @@ export default class Gesture extends Component<IGesture, any> {
   }
   triggerCombineEvent = (mainEventName, eventStatus, ...args) => {
     this.triggerEvent(mainEventName, ...args);
+    this.triggerSubEvent(mainEventName, eventStatus, ...args);
+
+  }
+  triggerSubEvent = (mainEventName, eventStatus, ...args) => {
     if (eventStatus) {
       const subEventName = getEventName(mainEventName, eventStatus);
       this.triggerEvent(subEventName, ...args);
@@ -184,7 +196,6 @@ export default class Gesture extends Component<IGesture, any> {
     }
   }
   cleanGestureState = () => {
-    console.log('clean pre gesture state');
     delete this.gesture;
   }
   getTouches = (e) => {
@@ -195,11 +206,12 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   _handleTouchStart = (e) => {
-    console.log('touchstart');
+    console.log('-- touchstart --');
 
     e.preventDefault();
     this.initGestureStatus(e);
     this.initPressTimer();
+    this.checkIfSingleTouchStart();
     this.checkIfMultiTouchStart();
   }
   initGestureStatus = (e) => {
@@ -212,13 +224,19 @@ export default class Gesture extends Component<IGesture, any> {
       startTime,
       startTouches,
       startMutliFingerStatus,
+      pan: startTouches.length === 1,
       /* copy for next time touch move cala convenient*/
       time: startTime,
       touches: startTouches,
       mutliFingerStatus: startMutliFingerStatus,
     });
   }
-
+  checkIfSingleTouchStart = () => {
+    const { pan } = this.gesture;
+    if (pan) {
+      this.triggerCombineEvent('onPan', 'start');
+    }
+  }
   checkIfMultiTouchStart = () => {
     const { enablePinch, enableRotate } = this.props;
     const { touches } = this.gesture;
@@ -245,7 +263,7 @@ export default class Gesture extends Component<IGesture, any> {
     }
   }
   _handleTouchMove = (e) => {
-    console.log('touchmove');
+    console.log('-- touchmove --');
     if (!this.gesture) {
       // sometimes weird happen: touchstart -> touchmove..touchmove.. --> touchend --> touchmove --> touchend
       // so we need to skip the unnormal event cycle after touchend
@@ -256,6 +274,7 @@ export default class Gesture extends Component<IGesture, any> {
     this.cleanPressTimer();
 
     this.updateGestureStatus(e);
+    this.checkIfSingleTouchMove();
     this.checkIfMultiTouchMove();
   }
   checkIfMultiTouchMove = () => {
@@ -287,6 +306,32 @@ export default class Gesture extends Component<IGesture, any> {
         rotation,
       });
       this.triggerCombineEvent('onRotate', 'move');
+    }
+  }
+  checkIfSingleTouchMove = () => {
+    const { pan, touches, moveStatus } = this.gesture;
+    if (!pan) {
+      return;
+    }
+    if (touches.length > 1) {
+      this.setGestureState({
+        pan: false,
+      });
+      // Todo: 1 finger -> 2 finger, wait to test this situation
+      pan && this.triggerCombineEvent('onPan', 'cancel');
+      return;
+    }
+    if (moveStatus) {
+      const { x, y, z, velocity } = moveStatus;
+      const direction = getDirection(x, y);
+      this.setGestureState({
+        direction,
+      });
+      const eventName = getDirectionEventName(direction);
+      if (pan) {
+        this.triggerCombineEvent('onPan', eventName);
+        this.triggerSubEvent('onPan', 'move');
+      }
     }
   }
   checkIfMultiTouchEnd = (status) => {
@@ -324,29 +369,30 @@ export default class Gesture extends Component<IGesture, any> {
     });
   }
   _handleTouchEnd = (e) => {
-    console.log('touchend');
+    console.log('-- touchend --');
     if (!this.gesture) {
       return;
     }
     this.cleanPressTimer();
     this.updateGestureStatus(e);
+    this.doSingleTouchEnd('end');
     this.checkIfMultiTouchEnd('end');
-    this.checkIfEndWithTapOrSwipe();
   }
 
   _handleTouchCancel = (e) => {
+    console.log('-- touchcancel --');
     // Todo: wait to test cancel case
-    console.log('touchcancel');
     if (!this.gesture) {
       return;
     }
     this.cleanPressTimer();
     this.updateGestureStatus(e);
+    this.doSingleTouchEnd('cancel');
     this.checkIfMultiTouchEnd('cancel');
   }
 
-  checkIfEndWithTapOrSwipe = () => {
-    const { moveStatus, pinch, rotate, press } = this.gesture;
+  doSingleTouchEnd = (status) => {
+    const { moveStatus, pinch, rotate, press, pan, direction } = this.gesture;
 
     if (pinch || rotate) {
       return;
@@ -354,14 +400,15 @@ export default class Gesture extends Component<IGesture, any> {
     if (moveStatus) {
       const { x, y, z, velocity } = moveStatus;
       const swipe = shouldTriggerSwipe(z, velocity);
-      const direction = getDirection(x, y);
       this.setGestureState({
         swipe,
-        direction,
       });
+      if (pan) {
+        this.triggerCombineEvent('onPan', status);
+      }
       if (swipe) {
-        const eventName = getDirectionEventName(direction);
-        this.triggerCombineEvent('onSwipe', eventName);
+        const directionEvName = getDirectionEventName(direction);
+        this.triggerCombineEvent('onSwipe', directionEvName);
         return;
       }
     }
@@ -371,7 +418,6 @@ export default class Gesture extends Component<IGesture, any> {
       return;
     }
     this.triggerEvent('onTap');
-
   }
 
   componentWillUnmount() {
