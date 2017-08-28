@@ -133,7 +133,6 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   triggerEvent = (name, ...args) => {
-    console.log(name, ...args);
     const cb = this.props[name];
     if (typeof cb === 'function') {
       // always give user gesture object as first params first
@@ -206,12 +205,9 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   _handleTouchStart = (e) => {
-    console.log('-- touchstart --');
-
     e.preventDefault();
     this.initGestureStatus(e);
     this.initPressTimer();
-    this.checkIfSingleTouchStart();
     this.checkIfMultiTouchStart();
   }
   initGestureStatus = (e) => {
@@ -224,19 +220,13 @@ export default class Gesture extends Component<IGesture, any> {
       startTime,
       startTouches,
       startMutliFingerStatus,
-      pan: startTouches.length === 1,
       /* copy for next time touch move cala convenient*/
       time: startTime,
       touches: startTouches,
       mutliFingerStatus: startMutliFingerStatus,
     });
   }
-  checkIfSingleTouchStart = () => {
-    const { pan } = this.gesture;
-    if (pan) {
-      this.triggerCombineEvent('onPan', 'start');
-    }
-  }
+
   checkIfMultiTouchStart = () => {
     const { enablePinch, enableRotate } = this.props;
     const { touches } = this.gesture;
@@ -263,7 +253,6 @@ export default class Gesture extends Component<IGesture, any> {
     }
   }
   _handleTouchMove = (e) => {
-    console.log('-- touchmove --');
     if (!this.gesture) {
       // sometimes weird happen: touchstart -> touchmove..touchmove.. --> touchend --> touchmove --> touchend
       // so we need to skip the unnormal event cycle after touchend
@@ -310,9 +299,6 @@ export default class Gesture extends Component<IGesture, any> {
   }
   checkIfSingleTouchMove = () => {
     const { pan, touches, moveStatus } = this.gesture;
-    if (!pan) {
-      return;
-    }
     if (touches.length > 1) {
       this.setGestureState({
         pan: false,
@@ -322,13 +308,18 @@ export default class Gesture extends Component<IGesture, any> {
       return;
     }
     if (moveStatus) {
-      const { x, y, z, velocity } = moveStatus;
+      const { x, y } = moveStatus;
       const direction = getDirection(x, y);
       this.setGestureState({
         direction,
       });
       const eventName = getDirectionEventName(direction);
-      if (pan) {
+      if (!pan) {
+        this.triggerCombineEvent('onPan', 'start');
+        this.setGestureState({
+          pan: true,
+        });
+      } else {
         this.triggerCombineEvent('onPan', eventName);
         this.triggerSubEvent('onPan', 'move');
       }
@@ -369,7 +360,6 @@ export default class Gesture extends Component<IGesture, any> {
     });
   }
   _handleTouchEnd = (e) => {
-    console.log('-- touchend --');
     if (!this.gesture) {
       return;
     }
@@ -380,7 +370,6 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   _handleTouchCancel = (e) => {
-    console.log('-- touchcancel --');
     // Todo: wait to test cancel case
     if (!this.gesture) {
       return;
@@ -398,7 +387,7 @@ export default class Gesture extends Component<IGesture, any> {
       return;
     }
     if (moveStatus) {
-      const { x, y, z, velocity } = moveStatus;
+      const { z, velocity } = moveStatus;
       const swipe = shouldTriggerSwipe(z, velocity);
       this.setGestureState({
         swipe,

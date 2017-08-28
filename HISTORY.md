@@ -1,6 +1,10 @@
 # History
 ----
 
+## 0.0.4 / 2017-08-28
+
+Support pan.
+
 ## 0.0.3 / 2017-07-24
 
 Support onPinchIn, onPinchOut.

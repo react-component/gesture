@@ -35,7 +35,7 @@ class Demo extends Component<any, any> {
   }
 
   log = (type: string, keys?: string[]) => (...args) => {
-    console.log(type, ...args);
+    // console.log(type, ...args);
     window.requestAnimationFrame(() => {
       this.doLog(type, keys, ...args);
       this.doTransform(type, ...args);
@@ -56,7 +56,7 @@ class Demo extends Component<any, any> {
       const { rotation }  = args[0];
       this._rotation = rotation;
     }
-    if (type === 'onPanMove') {
+    if (type === 'onPan') {
       const { x, y } = args[0].moveStatus;
       this._x = x;
       this._y = y;
