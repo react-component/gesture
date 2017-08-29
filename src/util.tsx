@@ -1,3 +1,4 @@
+/* tslint:disable:no-bitwise */
 import { SWIPE, DIRECTION_NONE, DIRECTION_LEFT, DIRECTION_RIGHT, DIRECTION_UP, DIRECTION_DOWN } from './config';
 
 function _calcTriangleDistance(x, y) {
@@ -57,6 +58,13 @@ export function getEventName(prefix, status) {
 
 export function shouldTriggerSwipe(delta, velocity) {
   return Math.abs(delta) >= SWIPE.threshold && Math.abs(velocity) > SWIPE.velocity;
+}
+
+export function shouldTriggerDirection(direction, directionSetting) {
+  if (directionSetting & direction) {
+    return true;
+  }
+  return false;
 }
 
 /**

@@ -1,6 +1,6 @@
 {
   "name": "rc-gesture",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "Support gesture for react component",
   "keywords": [
     "react",

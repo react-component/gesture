@@ -61,6 +61,25 @@ all callback funtion will have one parammeter: `type GestureHandler = (s: IGestu
 
 ### props:
 
+#### common props
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th style="width: 100px;">name</th>
+        <th style="width: 50px;">type</th>
+        <th>default</th>
+        <th>description</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td>direction</td>
+          <td>string</td>
+          <th>`all`</th>
+          <td>control the allowed gesture direction, could be `['all', 'vertical', 'horizontal']`</td>
+      </tr>
+</table>
+
 #### Tap & Press
 <table class="table table-bordered table-striped">
     <thead>
