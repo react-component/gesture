@@ -1,6 +1,10 @@
 # History
 ----
 
+## 0.0.6 / 2017-08-29
+
+Use css touch-action;
+
 ## 0.0.4 / 2017-08-28
 
 Support pan.

@@ -37,6 +37,9 @@ export interface IGesture {
   enableRotate?: boolean;
   enablePinch?: boolean;
 
+  // control allowed direction
+  direction?: string;
+
   // pinch: s.zoom
   onPinch?: GestureHandler;
   onPinchStart?: GestureHandler;
@@ -119,6 +122,7 @@ export default class Gesture extends Component<IGesture, any> {
   static defaultProps = {
     enableRotate: false,
     enablePinch: false,
+    direction: 'all',
   };
 
   state = {
@@ -205,7 +209,9 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   _handleTouchStart = (e) => {
-    e.preventDefault();
+    if (e.touches.length > 1) {
+      e.preventDefault();
+    }
     this.initGestureStatus(e);
     this.initPressTimer();
     this.checkIfMultiTouchStart();
@@ -412,10 +418,24 @@ export default class Gesture extends Component<IGesture, any> {
   componentWillUnmount() {
     this.cleanPressTimer();
   }
+  getTouchAction = () => {
+    const { direction, enablePinch, enableRotate } = this.props;
+    if (enablePinch || enableRotate || direction === 'all') {
+      return 'pan-x pan-y';
+    }
+    if (direction === 'vertical') {
+      return 'pan-x';
+    }
+    if (direction === 'horizontal') {
+      return 'pan-y';
+    }
+    return 'auto';
+  }
   render() {
     const { children } = this.props;
 
     const child = React.Children.only(children);
+    const touchAction = this.getTouchAction();
 
     const events = {
       onTouchStart: this._handleTouchStart,
@@ -424,6 +444,11 @@ export default class Gesture extends Component<IGesture, any> {
       onTouchEnd: this._handleTouchEnd,
     };
 
-    return React.cloneElement(child, events);
+    return React.cloneElement(child, {
+      ...events,
+      style: {
+        touchAction,
+      },
+    });
   }
 }
