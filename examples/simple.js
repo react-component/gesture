@@ -10748,7 +10748,9 @@ var Gesture = function (_Component) {
             });
         };
         _this._handleTouchStart = function (e) {
-            e.preventDefault();
+            if (e.touches.length > 1) {
+                e.preventDefault();
+            }
             _this.initGestureStatus(e);
             _this.initPressTimer();
             _this.checkIfMultiTouchStart();
@@ -10972,6 +10974,23 @@ var Gesture = function (_Component) {
             }
             _this.triggerEvent('onTap');
         };
+        _this.getTouchAction = function () {
+            var _this$props2 = _this.props,
+                direction = _this$props2.direction,
+                enablePinch = _this$props2.enablePinch,
+                enableRotate = _this$props2.enableRotate;
+
+            if (enablePinch || enableRotate || direction === 'all') {
+                return 'pan-x pan-y';
+            }
+            if (direction === 'vertical') {
+                return 'pan-x';
+            }
+            if (direction === 'horizontal') {
+                return 'pan-y';
+            }
+            return 'auto';
+        };
         return _this;
     }
 
@@ -10986,13 +11005,16 @@ var Gesture = function (_Component) {
             var children = this.props.children;
 
             var child = __WEBPACK_IMPORTED_MODULE_5_react___default.a.Children.only(children);
+            var touchAction = this.getTouchAction();
             var events = {
                 onTouchStart: this._handleTouchStart,
                 onTouchMove: this._handleTouchMove,
                 onTouchCancel: this._handleTouchCancel,
                 onTouchEnd: this._handleTouchEnd
             };
-            return __WEBPACK_IMPORTED_MODULE_5_react___default.a.cloneElement(child, events);
+            return __WEBPACK_IMPORTED_MODULE_5_react___default.a.cloneElement(child, __WEBPACK_IMPORTED_MODULE_0_babel_runtime_helpers_extends___default()({}, events, { style: {
+                    touchAction: touchAction
+                } }));
         }
     }]);
 
@@ -11003,7 +11025,8 @@ var Gesture = function (_Component) {
 
 Gesture.defaultProps = {
     enableRotate: false,
-    enablePinch: false
+    enablePinch: false,
+    direction: 'all'
 };
 
 /***/ }),

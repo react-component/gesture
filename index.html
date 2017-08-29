@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-gesture@0.0.5 - Support gesture for react component</title>
+  <title>rc-gesture@0.0.6 - Support gesture for react component</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-gesture@0.0.5</h1>
+  <h1>rc-gesture@0.0.6</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -773,7 +773,25 @@ container);</code></pre></div><h2>API<a id="user-content-api" name="api" class="
 <ul>
 <li>gesture: the rc-gesture state object, which contain all information you may need, see <a href="#gesture" title="gesture">gesture</a></li>
 </ul>
-<h3>props:<a id="user-content-props:" name="props:" class="anchor" aria-hidden="true" href="#props:"><span class="octicon octicon-link"></span></a></h3><h4>Tap &amp; Press<a id="user-content-tap-&amp;-press" name="tap-&amp;-press" class="anchor" aria-hidden="true" href="#tap-&amp;-press"><span class="octicon octicon-link"></span></a></h4><table class="table table-bordered table-striped">
+<h3>props:<a id="user-content-props:" name="props:" class="anchor" aria-hidden="true" href="#props:"><span class="octicon octicon-link"></span></a></h3><h4>common props<a id="user-content-common-props" name="common-props" class="anchor" aria-hidden="true" href="#common-props"><span class="octicon octicon-link"></span></a></h4><table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th style="width: 100px;">name</th>
+        <th style="width: 50px;">type</th>
+        <th>default</th>
+        <th>description</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td>direction</td>
+          <td>string</td>
+          <th><code>all</code></th>
+          <td>control the allowed gesture direction, could be <code>[&#39;all&#39;, &#39;vertical&#39;, &#39;horizontal&#39;]</code></td>
+      </tr>
+</table>
+
+<h4>Tap &amp; Press<a id="user-content-tap-&amp;-press" name="tap-&amp;-press" class="anchor" aria-hidden="true" href="#tap-&amp;-press"><span class="octicon octicon-link"></span></a></h4><table class="table table-bordered table-striped">
     <thead>
     <tr>
         <th style="width: 100px;">name</th>
