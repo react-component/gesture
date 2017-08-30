@@ -214,8 +214,8 @@ export default class Gesture extends Component<IGesture, any> {
   }
   getTouches = (e) => {
     return Array.prototype.slice.call(e.touches).map(item => ({
-      x: item.pageX,
-      y: item.pageY,
+      x: item.screenX,
+      y: item.screenY,
     }));
   }
 
