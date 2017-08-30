@@ -4,10 +4,10 @@ import {
   calcRotation,
   getEventName, now,
   calcMutliFingerStatus, calcMoveStatus,
-  shouldTriggerSwipe,
+  shouldTriggerSwipe, shouldTriggerDirection,
   getDirection, getDirectionEventName,
 } from './util';
-import { PRESS } from './config';
+import { PRESS, DIRECTION_ALL, DIRECTION_VERTICAL, DIRECTION_HORIZONTAL } from './config';
 
 export declare type GestureHandler = (s: IGestureStauts) => void;
 
@@ -118,6 +118,12 @@ export interface IGestureStauts {
     rotation?: number; // Rotation (in deg) that has been done when multi-touch. 0 on a single touch.
 };
 
+const directionMap = {
+  all: DIRECTION_ALL,
+  vertical: DIRECTION_VERTICAL,
+  horizontal: DIRECTION_HORIZONTAL,
+};
+
 export default class Gesture extends Component<IGesture, any> {
   static defaultProps = {
     enableRotate: false,
@@ -130,10 +136,15 @@ export default class Gesture extends Component<IGesture, any> {
 
   protected gesture: IGestureStauts;
 
+  protected event: any;
+
   private pressTimer: number;
+
+  private directionSetting: number;
 
   constructor(props) {
     super(props);
+    this.directionSetting = directionMap[props.direction];
   }
 
   triggerEvent = (name, ...args) => {
@@ -209,6 +220,7 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   _handleTouchStart = (e) => {
+    this.event = e;
     if (e.touches.length > 1) {
       e.preventDefault();
     }
@@ -259,6 +271,7 @@ export default class Gesture extends Component<IGesture, any> {
     }
   }
   _handleTouchMove = (e) => {
+    this.event = e;
     if (!this.gesture) {
       // sometimes weird happen: touchstart -> touchmove..touchmove.. --> touchend --> touchmove --> touchend
       // so we need to skip the unnormal event cycle after touchend
@@ -303,6 +316,9 @@ export default class Gesture extends Component<IGesture, any> {
       this.triggerCombineEvent('onRotate', 'move');
     }
   }
+  allowGesture = () => {
+    return shouldTriggerDirection(this.gesture.direction, this.directionSetting);
+  }
   checkIfSingleTouchMove = () => {
     const { pan, touches, moveStatus } = this.gesture;
     if (touches.length > 1) {
@@ -320,6 +336,9 @@ export default class Gesture extends Component<IGesture, any> {
         direction,
       });
       const eventName = getDirectionEventName(direction);
+      if (!this.allowGesture()) {
+        return;
+      }
       if (!pan) {
         this.triggerCombineEvent('onPan', 'start');
         this.setGestureState({
@@ -366,6 +385,7 @@ export default class Gesture extends Component<IGesture, any> {
     });
   }
   _handleTouchEnd = (e) => {
+    this.event = e;
     if (!this.gesture) {
       return;
     }
@@ -376,6 +396,7 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   _handleTouchCancel = (e) => {
+    this.event = e;
     // Todo: wait to test cancel case
     if (!this.gesture) {
       return;
@@ -389,7 +410,7 @@ export default class Gesture extends Component<IGesture, any> {
   doSingleTouchEnd = (status) => {
     const { moveStatus, pinch, rotate, press, pan, direction } = this.gesture;
 
-    if (pinch || rotate) {
+    if (pinch || rotate || !this.allowGesture()) {
       return;
     }
     if (moveStatus) {
@@ -419,14 +440,15 @@ export default class Gesture extends Component<IGesture, any> {
     this.cleanPressTimer();
   }
   getTouchAction = () => {
-    const { direction, enablePinch, enableRotate } = this.props;
-    if (enablePinch || enableRotate || direction === 'all') {
+    const { enablePinch, enableRotate } = this.props;
+    const { directionSetting } = this;
+    if (enablePinch || enableRotate || directionSetting === DIRECTION_ALL) {
       return 'pan-x pan-y';
     }
-    if (direction === 'vertical') {
+    if (directionSetting === DIRECTION_VERTICAL) {
       return 'pan-x';
     }
-    if (direction === 'horizontal') {
+    if (directionSetting === DIRECTION_HORIZONTAL) {
       return 'pan-y';
     }
     return 'auto';

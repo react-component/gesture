@@ -72,7 +72,6 @@ class Demo extends Component<any, any> {
     typeof this._x === 'number' && transform.push(`translateX(${this._x}px)`);
     typeof this._y === 'number' && transform.push(`translateY(${this._y}px)`);
     transform = transform.join(' ');
-    console.error(transform);
     this.rootNode = ReactDOM.findDOMNode(this.root);
     this.rootNode.style.transform = transform;
   }
@@ -84,6 +83,7 @@ class Demo extends Component<any, any> {
         <div ref="log" style={{height: 100, overflow: 'auto', margin: 10}}/>
         <div className="outter">
           <Gesture
+            direction="all"
             enablePinch
             enableRotate
             onTap={this.log('onTap')}

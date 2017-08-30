@@ -1,6 +1,10 @@
 # History
 ----
 
+## 0.0.7 / 2017-08-30
+
+Support direction lock.
+
 ## 0.0.6 / 2017-08-29
 
 Use css touch-action;
