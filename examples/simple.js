@@ -6919,26 +6919,26 @@ module.exports = lowPriorityWarning;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return DIRECTION_NONE; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return DIRECTION_LEFT; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return DIRECTION_RIGHT; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return DIRECTION_UP; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return DIRECTION_DOWN; });
-/* unused harmony export DIRECTION_HORIZONTAL */
-/* unused harmony export DIRECTION_VERTICAL */
-/* unused harmony export DIRECTION_ALL */
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PRESS; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return SWIPE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return DIRECTION_NONE; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return DIRECTION_LEFT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return DIRECTION_RIGHT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return DIRECTION_UP; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return DIRECTION_DOWN; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return DIRECTION_HORIZONTAL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return DIRECTION_VERTICAL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DIRECTION_ALL; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return PRESS; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return SWIPE; });
 /* tslint:disable:no-bitwise */
 // http://hammerjs.github.io/api/#directions
-var DIRECTION_NONE = 1;
-var DIRECTION_LEFT = 2;
-var DIRECTION_RIGHT = 4;
-var DIRECTION_UP = 8;
-var DIRECTION_DOWN = 16;
-var DIRECTION_HORIZONTAL = DIRECTION_LEFT | DIRECTION_RIGHT;
-var DIRECTION_VERTICAL = DIRECTION_UP | DIRECTION_DOWN;
-var DIRECTION_ALL = DIRECTION_HORIZONTAL | DIRECTION_VERTICAL;
+var DIRECTION_NONE = 1; // 00001
+var DIRECTION_LEFT = 2; // 00010
+var DIRECTION_RIGHT = 4; // 00100
+var DIRECTION_UP = 8; // 01000
+var DIRECTION_DOWN = 16; // 10000
+var DIRECTION_HORIZONTAL = DIRECTION_LEFT | DIRECTION_RIGHT; // 00110 6
+var DIRECTION_VERTICAL = DIRECTION_UP | DIRECTION_DOWN; // 11000 24
+var DIRECTION_ALL = DIRECTION_HORIZONTAL | DIRECTION_VERTICAL; // 11110  30
 // http://hammerjs.github.io/recognizer-press/
 var PRESS = {
     time: 251
@@ -10600,7 +10600,6 @@ var Demo = function (_Component) {
             typeof _this._x === 'number' && transform.push('translateX(' + _this._x + 'px)');
             typeof _this._y === 'number' && transform.push('translateY(' + _this._y + 'px)');
             transform = transform.join(' ');
-            console.error(transform);
             _this.rootNode = __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.findDOMNode(_this.root);
             _this.rootNode.style.transform = transform;
         };
@@ -10612,7 +10611,7 @@ var Demo = function (_Component) {
         value: function render() {
             var _this2 = this;
 
-            return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__src_index__["a" /* default */], { enablePinch: true, enableRotate: true, onTap: this.log('onTap'), onPress: this.log('onPress'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['direction']), onSwipeLeft: this.log('onSwipeLeft', ['direction']), onSwipeRight: this.log('onSwipeRight', ['direction']), onSwipeUp: this.log('onSwipeUp', ['direction']), onSwipeDown: this.log('onSwipeDown', ['direction']), onPinch: this.log('onPinch', ['scale']), onPinchStart: this.log('onPinchStart', ['scale']), onPinchMove: this.log('onPinchMove', ['scale']), onPinchEnd: this.log('onPinchEnd', ['scale']), onPinchCancel: this.log('onPinchCancel', ['scale']), onPinchIn: this.log('onPinchIn', ['scale']), onPinchOut: this.log('onPinchOut', ['scale']), onRotate: this.log('onRotate', ['rotation']), onRotateStart: this.log('onRotateStart', ['rotation']), onRotateMove: this.log('onRotateMove', ['rotation']), onRotateEnd: this.log('onRotateEnd', ['rotation']), onRotateCancel: this.log('onRotateCancel', ['rotation']), onPan: this.log('onPan', ['moveStatus', 'direction']), onPanStart: this.log('onPanStart', ['moveStatus', 'direction']), onPanMove: this.log('onPanMove', ['moveStatus', 'direction']), onPanEnd: this.log('onPanEnd', ['moveStatus', 'direction']), onPanCancel: this.log('onPanCancel', ['moveStatus', 'direction']), onPanLeft: this.log('onPanLeft', ['moveStatus', 'direction']), onPanRight: this.log('onPanRight', ['moveStatus', 'direction']), onPanUp: this.log('onPanUp', ['moveStatus', 'direction']), onPanDown: this.log('onPanDown', ['moveStatus', 'direction']) }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "inner", ref: function ref(el) {
+            return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__src_index__["a" /* default */], { direction: "all", enablePinch: true, enableRotate: true, onTap: this.log('onTap'), onPress: this.log('onPress'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['direction']), onSwipeLeft: this.log('onSwipeLeft', ['direction']), onSwipeRight: this.log('onSwipeRight', ['direction']), onSwipeUp: this.log('onSwipeUp', ['direction']), onSwipeDown: this.log('onSwipeDown', ['direction']), onPinch: this.log('onPinch', ['scale']), onPinchStart: this.log('onPinchStart', ['scale']), onPinchMove: this.log('onPinchMove', ['scale']), onPinchEnd: this.log('onPinchEnd', ['scale']), onPinchCancel: this.log('onPinchCancel', ['scale']), onPinchIn: this.log('onPinchIn', ['scale']), onPinchOut: this.log('onPinchOut', ['scale']), onRotate: this.log('onRotate', ['rotation']), onRotateStart: this.log('onRotateStart', ['rotation']), onRotateMove: this.log('onRotateMove', ['rotation']), onRotateEnd: this.log('onRotateEnd', ['rotation']), onRotateCancel: this.log('onRotateCancel', ['rotation']), onPan: this.log('onPan', ['moveStatus', 'direction']), onPanStart: this.log('onPanStart', ['moveStatus', 'direction']), onPanMove: this.log('onPanMove', ['moveStatus', 'direction']), onPanEnd: this.log('onPanEnd', ['moveStatus', 'direction']), onPanCancel: this.log('onPanCancel', ['moveStatus', 'direction']), onPanLeft: this.log('onPanLeft', ['moveStatus', 'direction']), onPanRight: this.log('onPanRight', ['moveStatus', 'direction']), onPanUp: this.log('onPanUp', ['moveStatus', 'direction']), onPanDown: this.log('onPanDown', ['moveStatus', 'direction']) }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "inner", ref: function ref(el) {
                     _this2.root = el;
                 } }))));
         }
@@ -10653,6 +10652,11 @@ __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.render(__WEBPACK_IMPORTED_MODU
 
 ;
 ;
+var directionMap = {
+    all: __WEBPACK_IMPORTED_MODULE_7__config__["a" /* DIRECTION_ALL */],
+    vertical: __WEBPACK_IMPORTED_MODULE_7__config__["b" /* DIRECTION_VERTICAL */],
+    horizontal: __WEBPACK_IMPORTED_MODULE_7__config__["c" /* DIRECTION_HORIZONTAL */]
+};
 
 var Gesture = function (_Component) {
     __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_inherits___default()(Gesture, _Component);
@@ -10716,7 +10720,7 @@ var Gesture = function (_Component) {
                     press: true
                 });
                 _this.triggerEvent('onPress');
-            }, __WEBPACK_IMPORTED_MODULE_7__config__["a" /* PRESS */].time);
+            }, __WEBPACK_IMPORTED_MODULE_7__config__["d" /* PRESS */].time);
         };
         _this.cleanPressTimer = function () {
             /* tslint:disable:no-unused-expression */
@@ -10748,6 +10752,7 @@ var Gesture = function (_Component) {
             });
         };
         _this._handleTouchStart = function (e) {
+            _this.event = e;
             if (e.touches.length > 1) {
                 e.preventDefault();
             }
@@ -10799,6 +10804,7 @@ var Gesture = function (_Component) {
             }
         };
         _this._handleTouchMove = function (e) {
+            _this.event = e;
             if (!_this.gesture) {
                 // sometimes weird happen: touchstart -> touchmove..touchmove.. --> touchend --> touchmove --> touchend
                 // so we need to skip the unnormal event cycle after touchend
@@ -10846,6 +10852,9 @@ var Gesture = function (_Component) {
                 _this.triggerCombineEvent('onRotate', 'move');
             }
         };
+        _this.allowGesture = function () {
+            return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["e" /* shouldTriggerDirection */])(_this.gesture.direction, _this.directionSetting);
+        };
         _this.checkIfSingleTouchMove = function () {
             var _this$gesture2 = _this.gesture,
                 pan = _this$gesture2.pan,
@@ -10864,11 +10873,14 @@ var Gesture = function (_Component) {
                 var x = moveStatus.x,
                     y = moveStatus.y;
 
-                var direction = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["e" /* getDirection */])(x, y);
+                var direction = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["f" /* getDirection */])(x, y);
                 _this.setGestureState({
                     direction: direction
                 });
-                var eventName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["f" /* getDirectionEventName */])(direction);
+                var eventName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["g" /* getDirectionEventName */])(direction);
+                if (!_this.allowGesture()) {
+                    return;
+                }
                 if (!pan) {
                     _this.triggerCombineEvent('onPan', 'start');
                     _this.setGestureState({
@@ -10907,7 +10919,7 @@ var Gesture = function (_Component) {
                 rotate = _this$gesture4.rotate;
 
             var touches = _this.getTouches(e);
-            var moveStatus = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["g" /* calcMoveStatus */])(startTouches, touches, time - startTime);
+            var moveStatus = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["h" /* calcMoveStatus */])(startTouches, touches, time - startTime);
             var mutliFingerStatus = void 0;
             if (pinch || rotate) {
                 mutliFingerStatus = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["c" /* calcMutliFingerStatus */])(touches);
@@ -10921,6 +10933,7 @@ var Gesture = function (_Component) {
             });
         };
         _this._handleTouchEnd = function (e) {
+            _this.event = e;
             if (!_this.gesture) {
                 return;
             }
@@ -10930,6 +10943,7 @@ var Gesture = function (_Component) {
             _this.checkIfMultiTouchEnd('end');
         };
         _this._handleTouchCancel = function (e) {
+            _this.event = e;
             // Todo: wait to test cancel case
             if (!_this.gesture) {
                 return;
@@ -10948,14 +10962,14 @@ var Gesture = function (_Component) {
                 pan = _this$gesture5.pan,
                 direction = _this$gesture5.direction;
 
-            if (pinch || rotate) {
+            if (pinch || rotate || !_this.allowGesture()) {
                 return;
             }
             if (moveStatus) {
                 var z = moveStatus.z,
                     velocity = moveStatus.velocity;
 
-                var swipe = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["h" /* shouldTriggerSwipe */])(z, velocity);
+                var swipe = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["i" /* shouldTriggerSwipe */])(z, velocity);
                 _this.setGestureState({
                     swipe: swipe
                 });
@@ -10963,7 +10977,7 @@ var Gesture = function (_Component) {
                     _this.triggerCombineEvent('onPan', status);
                 }
                 if (swipe) {
-                    var directionEvName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["f" /* getDirectionEventName */])(direction);
+                    var directionEvName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["g" /* getDirectionEventName */])(direction);
                     _this.triggerCombineEvent('onSwipe', directionEvName);
                     return;
                 }
@@ -10976,21 +10990,22 @@ var Gesture = function (_Component) {
         };
         _this.getTouchAction = function () {
             var _this$props2 = _this.props,
-                direction = _this$props2.direction,
                 enablePinch = _this$props2.enablePinch,
                 enableRotate = _this$props2.enableRotate;
+            var directionSetting = _this.directionSetting;
 
-            if (enablePinch || enableRotate || direction === 'all') {
+            if (enablePinch || enableRotate || directionSetting === __WEBPACK_IMPORTED_MODULE_7__config__["a" /* DIRECTION_ALL */]) {
                 return 'pan-x pan-y';
             }
-            if (direction === 'vertical') {
+            if (directionSetting === __WEBPACK_IMPORTED_MODULE_7__config__["b" /* DIRECTION_VERTICAL */]) {
                 return 'pan-x';
             }
-            if (direction === 'horizontal') {
+            if (directionSetting === __WEBPACK_IMPORTED_MODULE_7__config__["c" /* DIRECTION_HORIZONTAL */]) {
                 return 'pan-y';
             }
             return 'auto';
         };
+        _this.directionSetting = directionMap[props.direction];
         return _this;
     }
 
@@ -11036,13 +11051,15 @@ Gesture.defaultProps = {
 "use strict";
 /* harmony export (immutable) */ __webpack_exports__["b"] = now;
 /* harmony export (immutable) */ __webpack_exports__["c"] = calcMutliFingerStatus;
-/* harmony export (immutable) */ __webpack_exports__["g"] = calcMoveStatus;
+/* harmony export (immutable) */ __webpack_exports__["h"] = calcMoveStatus;
 /* harmony export (immutable) */ __webpack_exports__["d"] = calcRotation;
 /* harmony export (immutable) */ __webpack_exports__["a"] = getEventName;
-/* harmony export (immutable) */ __webpack_exports__["h"] = shouldTriggerSwipe;
-/* harmony export (immutable) */ __webpack_exports__["e"] = getDirection;
-/* harmony export (immutable) */ __webpack_exports__["f"] = getDirectionEventName;
+/* harmony export (immutable) */ __webpack_exports__["i"] = shouldTriggerSwipe;
+/* harmony export (immutable) */ __webpack_exports__["e"] = shouldTriggerDirection;
+/* harmony export (immutable) */ __webpack_exports__["f"] = getDirection;
+/* harmony export (immutable) */ __webpack_exports__["g"] = getDirectionEventName;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config__ = __webpack_require__(78);
+/* tslint:disable:no-bitwise */
 
 function _calcTriangleDistance(x, y) {
     return Math.sqrt(x * x + y * y);
@@ -11104,7 +11121,13 @@ function getEventName(prefix, status) {
     return prefix + status[0].toUpperCase() + status.slice(1);
 }
 function shouldTriggerSwipe(delta, velocity) {
-    return Math.abs(delta) >= __WEBPACK_IMPORTED_MODULE_0__config__["b" /* SWIPE */].threshold && Math.abs(velocity) > __WEBPACK_IMPORTED_MODULE_0__config__["b" /* SWIPE */].velocity;
+    return Math.abs(delta) >= __WEBPACK_IMPORTED_MODULE_0__config__["e" /* SWIPE */].threshold && Math.abs(velocity) > __WEBPACK_IMPORTED_MODULE_0__config__["e" /* SWIPE */].velocity;
+}
+function shouldTriggerDirection(direction, directionSetting) {
+    if (directionSetting & direction) {
+        return true;
+    }
+    return false;
 }
 /**
  * @private
@@ -11115,28 +11138,28 @@ function shouldTriggerSwipe(delta, velocity) {
  */
 function getDirection(x, y) {
     if (x === y) {
-        return __WEBPACK_IMPORTED_MODULE_0__config__["c" /* DIRECTION_NONE */];
+        return __WEBPACK_IMPORTED_MODULE_0__config__["f" /* DIRECTION_NONE */];
     }
     if (Math.abs(x) >= Math.abs(y)) {
-        return x < 0 ? __WEBPACK_IMPORTED_MODULE_0__config__["d" /* DIRECTION_LEFT */] : __WEBPACK_IMPORTED_MODULE_0__config__["e" /* DIRECTION_RIGHT */];
+        return x < 0 ? __WEBPACK_IMPORTED_MODULE_0__config__["g" /* DIRECTION_LEFT */] : __WEBPACK_IMPORTED_MODULE_0__config__["h" /* DIRECTION_RIGHT */];
     }
-    return y < 0 ? __WEBPACK_IMPORTED_MODULE_0__config__["f" /* DIRECTION_UP */] : __WEBPACK_IMPORTED_MODULE_0__config__["g" /* DIRECTION_DOWN */];
+    return y < 0 ? __WEBPACK_IMPORTED_MODULE_0__config__["i" /* DIRECTION_UP */] : __WEBPACK_IMPORTED_MODULE_0__config__["j" /* DIRECTION_DOWN */];
 }
 function getDirectionEventName(direction) {
     var name = void 0;
     switch (direction) {
-        case __WEBPACK_IMPORTED_MODULE_0__config__["c" /* DIRECTION_NONE */]:
+        case __WEBPACK_IMPORTED_MODULE_0__config__["f" /* DIRECTION_NONE */]:
             break;
-        case __WEBPACK_IMPORTED_MODULE_0__config__["d" /* DIRECTION_LEFT */]:
+        case __WEBPACK_IMPORTED_MODULE_0__config__["g" /* DIRECTION_LEFT */]:
             name = 'left';
             break;
-        case __WEBPACK_IMPORTED_MODULE_0__config__["e" /* DIRECTION_RIGHT */]:
+        case __WEBPACK_IMPORTED_MODULE_0__config__["h" /* DIRECTION_RIGHT */]:
             name = 'right';
             break;
-        case __WEBPACK_IMPORTED_MODULE_0__config__["f" /* DIRECTION_UP */]:
+        case __WEBPACK_IMPORTED_MODULE_0__config__["i" /* DIRECTION_UP */]:
             name = 'up';
             break;
-        case __WEBPACK_IMPORTED_MODULE_0__config__["g" /* DIRECTION_DOWN */]:
+        case __WEBPACK_IMPORTED_MODULE_0__config__["j" /* DIRECTION_DOWN */]:
             name = 'down';
             break;
         default:
