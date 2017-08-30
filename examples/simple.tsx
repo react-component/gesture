@@ -1,6 +1,6 @@
 /* tslint:disable:no-console no-unused-expression */
 
-import Gesture from '../src/index';
+import Gesture from 'rc-gesture';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 const style = `
