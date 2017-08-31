@@ -406,11 +406,17 @@ export default class Gesture extends Component<IGesture, any> {
     this.doSingleTouchEnd('cancel');
     this.checkIfMultiTouchEnd('cancel');
   }
-
+  triggerAllowEvent = (type, status) => {
+    if (this.allowGesture()) {
+      this.triggerCombineEvent(type, status);
+    } else {
+      this.triggerSubEvent(type, status);
+    }
+  }
   doSingleTouchEnd = (status) => {
     const { moveStatus, pinch, rotate, press, pan, direction } = this.gesture;
 
-    if (pinch || rotate || !this.allowGesture()) {
+    if (pinch || rotate) {
       return;
     }
     if (moveStatus) {
@@ -420,11 +426,14 @@ export default class Gesture extends Component<IGesture, any> {
         swipe,
       });
       if (pan) {
-        this.triggerCombineEvent('onPan', status);
+        // pan need end, it's a process
+        // sometimes, start with pan left, but end with pan right....
+        this.triggerAllowEvent('onPan', status);
       }
       if (swipe) {
         const directionEvName = getDirectionEventName(direction);
-        this.triggerCombineEvent('onSwipe', directionEvName);
+        // swipe just need a direction, it's a endpoint
+        this.triggerAllowEvent('onSwipe', directionEvName);
         return;
       }
     }
