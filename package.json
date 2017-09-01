@@ -1,6 +1,6 @@
 {
   "name": "rc-gesture",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "Support gesture for react component",
   "keywords": [
     "react",
@@ -29,7 +29,7 @@
     "port": 8005,
     "entry": {
       "rc-gesture": [
-        "./src/index"
+        "./index.js"
       ]
     }
   },
