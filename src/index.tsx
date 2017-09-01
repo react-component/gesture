@@ -218,8 +218,14 @@ export default class Gesture extends Component<IGesture, any> {
       y: item.screenY,
     }));
   }
-
+  triggerUserCb = (status, e) => {
+    const cbName = getEventName('onTouch', status);
+    if (cbName in this.props) {
+      this.props[cbName](e);
+    }
+  }
   _handleTouchStart = (e) => {
+    this.triggerUserCb('start', e);
     this.event = e;
     if (e.touches.length > 1) {
       e.preventDefault();
@@ -271,6 +277,7 @@ export default class Gesture extends Component<IGesture, any> {
     }
   }
   _handleTouchMove = (e) => {
+    this.triggerUserCb('move', e);
     this.event = e;
     if (!this.gesture) {
       // sometimes weird happen: touchstart -> touchmove..touchmove.. --> touchend --> touchmove --> touchend
@@ -385,6 +392,7 @@ export default class Gesture extends Component<IGesture, any> {
     });
   }
   _handleTouchEnd = (e) => {
+    this.triggerUserCb('end', e);
     this.event = e;
     if (!this.gesture) {
       return;
@@ -396,6 +404,7 @@ export default class Gesture extends Component<IGesture, any> {
   }
 
   _handleTouchCancel = (e) => {
+    this.triggerUserCb('cancel', e);
     this.event = e;
     // Todo: wait to test cancel case
     if (!this.gesture) {
@@ -479,6 +488,7 @@ export default class Gesture extends Component<IGesture, any> {
       ...events,
       style: {
         touchAction,
+        ...(child.props.style || {}),
       },
     });
   }
