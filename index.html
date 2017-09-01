@@ -7,7 +7,7 @@
   <meta charset="utf-8"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="//cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" rel="stylesheet"/>
-  <title>rc-gesture@0.0.14 - Support gesture for react component</title>
+  <title>rc-gesture@0.0.15 - Support gesture for react component</title>
   <style>
     @font-face {
       font-family: octicons-anchor;
@@ -737,7 +737,7 @@
 
 <body>
 <div class="header">
-  <h1>rc-gesture@0.0.14</h1>
+  <h1>rc-gesture@0.0.15</h1>
 </div>
 <div class="examples">
   <h3>EXAMPLES</h3>
@@ -765,11 +765,11 @@
 
 ReactDOM.render(
   <span class="hljs-tag">&lt;<span class="hljs-title">Gesture</span>
-    <span class="hljs-attribute">onTap</span>=<span class="hljs-value">{(gestureStauts)</span> =&gt;</span> { console.log(gestureStauts); }}
+    <span class="hljs-attribute">onTap</span>=<span class="hljs-value">{(gestureStatus)</span> =&gt;</span> { console.log(gestureStatus); }}
   &gt;
     <span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>container<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
   <span class="hljs-tag">&lt;/<span class="hljs-title">Gesture</span>&gt;</span>,
-container);</code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><p>all callback funtion will have one parammeter: <code>type GestureHandler = (s: IGestureStauts) =&gt; void;</code></p>
+container);</code></pre></div><h2>API<a id="user-content-api" name="api" class="anchor" aria-hidden="true" href="#api"><span class="octicon octicon-link"></span></a></h2><p>all callback funtion will have one parammeter: <code>type GestureHandler = (s: IGestureStatus) =&gt; void;</code></p>
 <ul>
 <li>gesture: the rc-gesture state object, which contain all information you may need, see <a href="#gesture" title="gesture">gesture</a></li>
 </ul>
