@@ -45,7 +45,7 @@ import Gesture from 'rc-gesture';
 
 ReactDOM.render(
   <Gesture
-    onTap={(gestureStauts) => { console.log(gestureStauts); }}
+    onTap={(gestureStatus) => { console.log(gestureStatus); }}
   >
     <div>container</div>
   </Gesture>,
@@ -55,7 +55,7 @@ container);
 
 ## API
 
-all callback funtion will have one parammeter: `type GestureHandler = (s: IGestureStauts) => void;`
+all callback funtion will have one parammeter: `type GestureHandler = (s: IGestureStatus) => void;`
 
 - gesture: the rc-gesture state object, which contain all information you may need, see [gesture](#gesture)
 

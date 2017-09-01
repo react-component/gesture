@@ -9,7 +9,7 @@ import {
 } from './util';
 import { PRESS, DIRECTION_ALL, DIRECTION_VERTICAL, DIRECTION_HORIZONTAL } from './config';
 
-export declare type GestureHandler = (s: IGestureStauts) => void;
+export declare type GestureHandler = (s: IGestureStatus) => void;
 
 export declare type Finger = {
   x: number; // e.touches[i].pageX
@@ -83,39 +83,39 @@ export interface IGesture {
 };
 
 // http://hammerjs.github.io/api/#event-object
-export interface IGestureStauts {
-    /* start status snapshot */
-    startTime: number;
-    startTouches: Finger[];
+export interface IGestureStatus {
+  /* start status snapshot */
+  startTime: number;
+  startTouches: Finger[];
 
-    startMutliFingerStatus?: MultiFingerStatus[];
+  startMutliFingerStatus?: MultiFingerStatus[];
 
-    /* now status snapshot */
-    time: number;
-    touches: Finger[];
+  /* now status snapshot */
+  time: number;
+  touches: Finger[];
 
-    mutliFingerStatus?: MultiFingerStatus[];
+  mutliFingerStatus?: MultiFingerStatus[];
 
-    /* delta status from touchstart to now, just for singe finger */
-    moveStatus?: SingeFingerMoveStatus;
+  /* delta status from touchstart to now, just for singe finger */
+  moveStatus?: SingeFingerMoveStatus;
 
-    /* whether is a long tap */
-    press?: boolean;
+  /* whether is a long tap */
+  press?: boolean;
 
-    /* whether is a pan */
-    pan?: boolean;
+  /* whether is a pan */
+  pan?: boolean;
 
-    /* whether is a swipe*/
-    swipe?: boolean;
-    direction?: number;
+  /* whether is a swipe*/
+  swipe?: boolean;
+  direction?: number;
 
-    /* whether is in pinch process */
-    pinch?: boolean;
-    scale?: number;
+  /* whether is in pinch process */
+  pinch?: boolean;
+  scale?: number;
 
-    /* whether is in rotate process */
-    rotate?: boolean;
-    rotation?: number; // Rotation (in deg) that has been done when multi-touch. 0 on a single touch.
+  /* whether is in rotate process */
+  rotate?: boolean;
+  rotation?: number; // Rotation (in deg) that has been done when multi-touch. 0 on a single touch.
 };
 
 const directionMap = {
@@ -134,7 +134,7 @@ export default class Gesture extends Component<IGesture, any> {
   state = {
   };
 
-  protected gesture: IGestureStauts;
+  protected gesture: IGestureStatus;
 
   protected event: any;
 
@@ -252,11 +252,11 @@ export default class Gesture extends Component<IGesture, any> {
       if (enablePinch) {
         const startMutliFingerStatus = calcMutliFingerStatus(touches);
         this.setGestureState({
-         startMutliFingerStatus,
+          startMutliFingerStatus,
 
-         /* init pinch status */
-         pinch: true,
-         scale: 1,
+          /* init pinch status */
+          pinch: true,
+          scale: 1,
         });
         this.triggerCombineEvent('onPinch', 'start');
       }
