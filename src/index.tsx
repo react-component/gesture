@@ -38,7 +38,7 @@ export interface IGesture {
   enablePinch?: boolean;
 
   // control allowed direction
-  direction?: string;
+  direction?: 'all' | 'vertical' | 'horizontal';
 
   // pinch: s.zoom
   onPinch?: GestureHandler;
