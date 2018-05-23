@@ -5,7 +5,7 @@ import {
   getEventName, now,
   calcMutliFingerStatus, calcMoveStatus,
   shouldTriggerSwipe, shouldTriggerDirection,
-  getDirection, getDirectionEventName,
+  getMovingDirection, getDirectionEventName,
 } from './util';
 import { PRESS, DIRECTION_ALL, DIRECTION_VERTICAL, DIRECTION_HORIZONTAL } from './config';
 
@@ -343,7 +343,7 @@ export default class Gesture extends Component<IGesture, any> {
       return;
     }
     if (moveStatus) {
-      const direction = getDirection(preTouches[0], touches[0]);
+      const direction = getMovingDirection(preTouches[0], touches[0]);
       this.setGestureState({
         direction,
       });
