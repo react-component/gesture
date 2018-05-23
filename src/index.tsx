@@ -5,7 +5,7 @@ import {
   getEventName, now,
   calcMutliFingerStatus, calcMoveStatus,
   shouldTriggerSwipe, shouldTriggerDirection,
-  getDirection, getDirectionEventName,
+  getMovingDirection, getDirectionEventName,
 } from './util';
 import { PRESS, DIRECTION_ALL, DIRECTION_VERTICAL, DIRECTION_HORIZONTAL } from './config';
 
@@ -93,6 +93,7 @@ export interface IGestureStatus {
   /* now status snapshot */
   time: number;
   touches: Finger[];
+  preTouches: Finger[];
 
   mutliFingerStatus?: MultiFingerStatus[];
 
@@ -193,6 +194,11 @@ export default class Gesture extends Component<IGesture, any> {
   setGestureState = (params) => {
     if (!this.gesture) {
       this.gesture = {} as any;
+    }
+
+    // cache the previous touches
+    if (this.gesture.touches) {
+      this.gesture.preTouches = this.gesture.touches;
     }
     this.gesture = {
       ...this.gesture,
@@ -327,7 +333,7 @@ export default class Gesture extends Component<IGesture, any> {
     return shouldTriggerDirection(this.gesture.direction, this.directionSetting);
   }
   checkIfSingleTouchMove = () => {
-    const { pan, touches, moveStatus } = this.gesture;
+    const { pan, touches, moveStatus, preTouches } = this.gesture;
     if (touches.length > 1) {
       this.setGestureState({
         pan: false,
@@ -337,8 +343,7 @@ export default class Gesture extends Component<IGesture, any> {
       return;
     }
     if (moveStatus) {
-      const { x, y } = moveStatus;
-      const direction = getDirection(x, y);
+      const direction = getMovingDirection(preTouches[0], touches[0]);
       this.setGestureState({
         direction,
       });

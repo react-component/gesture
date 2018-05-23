@@ -1,6 +1,6 @@
 {
   "name": "rc-gesture",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Support gesture for react component",
   "keywords": [
     "react",
@@ -43,7 +43,7 @@
     "pub": "rc-tools run pub --babel-runtime",
     "lint": "rc-tools run lint",
     "test": "jest",
-    "coverage": "jest --coverage && cat ./coverage/lcov.info | coveralls"
+    "coverage": "jest --coverage"
   },
   "jest": {
     "collectCoverageFrom": [
