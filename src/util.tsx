@@ -69,20 +69,23 @@ export function shouldTriggerDirection(direction, directionSetting) {
 
 /**
  * @private
- * get the direction between two points
- * @param {Number} x
- * @param {Number} y
+ * get the direction between tow points when touch moving
+ * @param {Object} point1 coordinate point, include x & y attributes
+ * @param {Object} point2 coordinate point, include x & y attributes
  * @return {Number} direction
  */
-export function getDirection(x, y) {
-  if (x === y) {
+export function getDirection(point1, point2) {
+  const {x: x1, y: y1} = point1;
+  const {x: x2, y: y2} = point2;
+  const deltaX = x2 - x1;
+  const deltaY = y2 - y1;
+  if (deltaX === 0 && deltaY === 0) {
     return DIRECTION_NONE;
   }
-
-  if (Math.abs(x) >= Math.abs(y)) {
-    return x < 0 ? DIRECTION_LEFT : DIRECTION_RIGHT;
+  if (Math.abs(deltaX) >= Math.abs(deltaY)) {
+    return deltaX < 0 ? DIRECTION_LEFT : DIRECTION_RIGHT;
   }
-  return y < 0 ? DIRECTION_UP : DIRECTION_DOWN;
+  return deltaY < 0 ? DIRECTION_UP : DIRECTION_DOWN;
 }
 
 export function getDirectionEventName(direction) {
