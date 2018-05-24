@@ -1,5 +1,9 @@
-# History
-----
+
+0.0.17 / 2018-05-24
+==================
+
+  * change version to 0.0.17
+  * fix: prevent view scroll when touch moving
 
 ## 0.0.7 / 2017-08-30
 
