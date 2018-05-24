@@ -10,10 +10,11 @@ const style = `
     justify-content: center;
     margin: 20px auto;
     width: 80%;
-    height: 400px;
+    height: 40px;
     border-width: 1px;
     border-color: red;
     border-style: solid;
+    overflow: hidden;
   }
   .inner {
     width: 80%;
@@ -42,6 +43,7 @@ class Demo extends Component<any, any> {
     });
   }
   doLog = (type, keys, ...args) => {
+    console.log('args', args[0].moveStatus);
     const extInfo = keys ? keys.map(key => `${key} = ${args[0][key]}`).join(', ') : '';
     const logEl = this.refs.log as any;
     logEl.innerHTML += `<p>${type} ${extInfo}</p>`;
@@ -83,7 +85,7 @@ class Demo extends Component<any, any> {
         <div ref="log" style={{height: 100, overflow: 'auto', margin: 10}}/>
         <div className="outter">
           <Gesture
-            direction="all"
+            direction="horizontal"
             enablePinch
             enableRotate
             onTap={this.log('onTap')}
