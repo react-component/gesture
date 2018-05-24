@@ -1,26 +1,36 @@
-# History
-----
 
-## 0.0.7 / 2017-08-30
+0.0.17 / 2018-05-24
+==================
 
-Support direction lock.
+  * change version to 0.0.17
+  * fix: prevent view scroll when touch moving
 
-## 0.0.6 / 2017-08-29
+0.0.7 / 2017-08-30
+==================
 
-Use css touch-action;
+  * Support direction lock.
 
-## 0.0.4 / 2017-08-28
+0.0.6 / 2017-08-29
+==================
 
-Support pan.
+  * Use css touch-action;
 
-## 0.0.3 / 2017-07-24
+0.0.4 / 2017-08-28
+==================
 
-Support onPinchIn, onPinchOut.
+  * Support pan.
 
-## 0.0.2 / 2017-07-21
+0.0.3 / 2017-07-24
+==================
 
-Add umd dist output.
+  * Support onPinchIn, onPinchOut.
 
-## 0.0.1 / 2017-07-21
+0.0.2 / 2017-07-21
+==================
 
-Support Tap, Press, Swipe, Pinch, Rotate.
+  * Add umd dist output.
+
+0.0.1 / 2017-07-21
+==================
+
+  * Support Tap, Press, Swipe, Pinch, Rotate.
