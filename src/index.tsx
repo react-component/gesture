@@ -342,6 +342,10 @@ export default class Gesture extends Component<IGesture, any> {
       pan && this.triggerCombineEvent('onPan', 'cancel');
       return;
     }
+
+    // to prevent touchmove event trigger view scroll.
+    this.event.preventDefault();
+
     if (moveStatus) {
       const direction = getMovingDirection(preTouches[0], touches[0]);
       this.setGestureState({
