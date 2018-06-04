@@ -21,6 +21,17 @@ const style = `
     height: 80%;
     background-color: black;
   }
+  .swiper-container{
+    margin: 20px 0;
+  }
+  .swiper{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    background-color: #CCC;
+    width: 100%;
+    height: 100%;
+  }
 `;
 
 class Demo extends Component<any, any> {
@@ -34,16 +45,13 @@ class Demo extends Component<any, any> {
   constructor(props) {
     super(props);
   }
-
   log = (type: string, keys?: string[]) => (...args) => {
-    // console.log(type, ...args);
     window.requestAnimationFrame(() => {
       this.doLog(type, keys, ...args);
       this.doTransform(type, ...args);
     });
   }
   doLog = (type, keys, ...args) => {
-    console.log('args', args[0].moveStatus);
     const extInfo = keys ? keys.map(key => `${key} = ${args[0][key]}`).join(', ') : '';
     const logEl = this.refs.log as any;
     logEl.innerHTML += `<p>${type} ${extInfo}</p>`;
@@ -77,6 +85,21 @@ class Demo extends Component<any, any> {
     this.rootNode = ReactDOM.findDOMNode(this.root);
     this.rootNode.style.transform = transform;
   }
+  moveSwiper(e) {
+    const {event, moveStatus} = e;
+    const {x, y} = e.moveStatus;
+
+    this.swiperNode = ReactDOM.findDOMNode(this.refSwiper);
+    this.swiperNode.style.transform = [`translateX(${x}px)`];
+
+    // preventDefault, avoid trigger scroll event when touch moving.
+    event.preventDefault();
+  }
+
+  resetSwiper() {
+    this.swiperNode = ReactDOM.findDOMNode(this.refSwiper);
+    this.swiperNode.style.transform = [`translateX(0px)`];
+  }
 
   render() {
     return (
@@ -85,7 +108,7 @@ class Demo extends Component<any, any> {
         <div ref="log" style={{height: 100, overflow: 'auto', margin: 10}}/>
         <div className="outter">
           <Gesture
-            direction="horizontal"
+            direction="all"
             enablePinch
             enableRotate
             onTap={this.log('onTap')}
@@ -119,6 +142,19 @@ class Demo extends Component<any, any> {
             onPanDown={this.log('onPanDown', ['moveStatus', 'direction'])}
           >
             <div className="inner" ref={(el) => { this.root = el; }}>
+            </div>
+          </Gesture>
+        </div>
+        <div className="swiper-container">
+          <Gesture
+            direction="horizontal"
+            onPanMove={ (e, args) => { this.moveSwiper(e, args); } }
+            onPanEnd={ () => { this.resetSwiper(); } }
+          >
+            <div style={{height: 200, backgroundColor: 'red'}}>
+              <div className="swiper" ref={ (e) => { this.refSwiper = e; } }>
+              This is simple swiper demo. Only allow horizontal direction and height=200px to test scroll event.
+              </div>
             </div>
           </Gesture>
         </div>
