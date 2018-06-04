@@ -105,6 +105,8 @@ export interface IGestureStatus {
 
   /* whether is a pan */
   pan?: boolean;
+  /* whether is an available pan */
+  availablePan?: boolean;
 
   /* whether is a swipe*/
   swipe?: boolean;
@@ -117,6 +119,9 @@ export interface IGestureStatus {
   /* whether is in rotate process */
   rotate?: boolean;
   rotation?: number; // Rotation (in deg) that has been done when multi-touch. 0 on a single touch.
+
+  /* event, such as TouchEvent, MouseEvent, PointerEvent */
+  srcEvent: any;
 };
 
 const directionMap = {
@@ -254,6 +259,7 @@ export default class Gesture extends Component<IGesture, any> {
       time: startTime,
       touches: startTouches,
       mutliFingerStatus: startMutliFingerStatus,
+      srcEvent: this.event,
     });
   }
 
@@ -333,7 +339,7 @@ export default class Gesture extends Component<IGesture, any> {
     return shouldTriggerDirection(this.gesture.direction, this.directionSetting);
   }
   checkIfSingleTouchMove = () => {
-    const { pan, touches, moveStatus, preTouches } = this.gesture;
+    const { pan, touches, moveStatus, preTouches, availablePan = true } = this.gesture;
     if (touches.length > 1) {
       this.setGestureState({
         pan: false,
@@ -343,19 +349,25 @@ export default class Gesture extends Component<IGesture, any> {
       return;
     }
 
-    if (moveStatus) {
+    // add avilablePan condition to fix the case in scrolling, which will cause unavailable pan move.
+    if (moveStatus && availablePan) {
+      const {x, y} = moveStatus;
       const direction = getMovingDirection(preTouches[0], touches[0]);
-      this.setGestureState({
-        direction,
-      });
+      this.setGestureState({direction});
+
       const eventName = getDirectionEventName(direction);
       if (!this.allowGesture()) {
+        // if the first move is unavailable, then judge all of remaining touch movings are also invalid.
+        if (!pan) {
+          this.setGestureState({availablePan: false});
+        }
         return;
       }
       if (!pan) {
         this.triggerCombineEvent('onPan', 'start');
         this.setGestureState({
           pan: true,
+          availablePan: true,
         });
       } else {
         this.triggerCombineEvent('onPan', eventName);

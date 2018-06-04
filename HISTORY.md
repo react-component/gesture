@@ -1,4 +1,12 @@
 
+0.0.20 / 2018-06-04
+==================
+
+  * fix and refine:
+    1. Add the event as a gesture property, and can be exposed to consumer. E.g.: rc-swipeout need using event to prevent scroll when touch moving.
+    2. Fixed a bug: panMove event could be invoked by unavailable touches. Look at the image for intuitional understanding: https://gw.alipayobjects.com/zos/rmsportal/nJviUPgzjtrUGCKrvUCz.gif.
+  * change version to 0.0.20
+
 0.0.17 / 2018-05-24
 ==================
 
