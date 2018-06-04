@@ -339,7 +339,7 @@ export default class Gesture extends Component<IGesture, any> {
     return shouldTriggerDirection(this.gesture.direction, this.directionSetting);
   }
   checkIfSingleTouchMove = () => {
-    const { pan, touches, moveStatus, preTouches, availablePan } = this.gesture;
+    const { pan, touches, moveStatus, preTouches, availablePan = true } = this.gesture;
     if (touches.length > 1) {
       this.setGestureState({
         pan: false,
@@ -350,7 +350,7 @@ export default class Gesture extends Component<IGesture, any> {
     }
 
     // add avilablePan condition to fix the case in scrolling, which will cause unavailable pan move.
-    if (moveStatus && availablePan !== false) {
+    if (moveStatus && availablePan) {
       const {x, y} = moveStatus;
       const direction = getMovingDirection(preTouches[0], touches[0]);
       this.setGestureState({direction});
