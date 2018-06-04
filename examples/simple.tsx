@@ -86,14 +86,14 @@ class Demo extends Component<any, any> {
     this.rootNode.style.transform = transform;
   }
   moveSwiper(e) {
-    const {event, moveStatus} = e;
+    const {srcEvent, moveStatus} = e;
     const {x, y} = e.moveStatus;
 
     this.swiperNode = ReactDOM.findDOMNode(this.refSwiper);
     this.swiperNode.style.transform = [`translateX(${x}px)`];
 
     // preventDefault, avoid trigger scroll event when touch moving.
-    event.preventDefault();
+    srcEvent.preventDefault();
   }
 
   resetSwiper() {

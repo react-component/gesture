@@ -120,8 +120,8 @@ export interface IGestureStatus {
   rotate?: boolean;
   rotation?: number; // Rotation (in deg) that has been done when multi-touch. 0 on a single touch.
 
-  /* event */
-  event: any;
+  /* event, such as TouchEvent, MouseEvent, PointerEvent */
+  srcEvent: any;
 };
 
 const directionMap = {
@@ -259,7 +259,7 @@ export default class Gesture extends Component<IGesture, any> {
       time: startTime,
       touches: startTouches,
       mutliFingerStatus: startMutliFingerStatus,
-      event: this.event,
+      srcEvent: this.event,
     });
   }
 
