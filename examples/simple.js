@@ -1713,7 +1713,7 @@ function getPooledWarningPropertyDefinition(propName, getVal) {
 /* 13 */
 /***/ (function(module, exports) {
 
-var core = module.exports = { version: '2.5.6' };
+var core = module.exports = { version: '2.5.7' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
@@ -10384,7 +10384,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var style = '\n  .outter {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    margin: 20px auto;\n    width: 80%;\n    height: 40px;\n    border-width: 1px;\n    border-color: red;\n    border-style: solid;\n    overflow: hidden;\n  }\n  .inner {\n    width: 80%;\n    height: 80%;\n    background-color: black;\n  }\n';
+var style = '\n  .outter {\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    margin: 20px auto;\n    width: 80%;\n    height: 40px;\n    border-width: 1px;\n    border-color: red;\n    border-style: solid;\n    overflow: hidden;\n  }\n  .inner {\n    width: 80%;\n    height: 80%;\n    background-color: black;\n  }\n  .swiper-container{\n    margin: 20px 0;\n  }\n  .swiper{\n    display: flex;\n    align-items: center;\n    text-align: center;\n    background-color: #CCC;\n    width: 100%;\n    height: 100%;\n  }\n';
 
 var Demo = function (_Component) {
     __WEBPACK_IMPORTED_MODULE_3_babel_runtime_helpers_inherits___default()(Demo, _Component);
@@ -10400,7 +10400,6 @@ var Demo = function (_Component) {
                     args[_key] = arguments[_key];
                 }
 
-                // console.log(type, ...args);
                 window.requestAnimationFrame(function () {
                     _this.doLog.apply(_this, [type, keys].concat(args));
                     _this.doTransform.apply(_this, [type].concat(args));
@@ -10412,7 +10411,6 @@ var Demo = function (_Component) {
                 args[_key2 - 2] = arguments[_key2];
             }
 
-            console.log('args', args[0].moveStatus);
             var extInfo = keys ? keys.map(function (key) {
                 return key + ' = ' + args[0][key];
             }).join(', ') : '';
@@ -10464,13 +10462,41 @@ var Demo = function (_Component) {
     }
 
     __WEBPACK_IMPORTED_MODULE_1_babel_runtime_helpers_createClass___default()(Demo, [{
+        key: 'moveSwiper',
+        value: function moveSwiper(e) {
+            var srcEvent = e.srcEvent,
+                moveStatus = e.moveStatus;
+            var _e$moveStatus = e.moveStatus,
+                x = _e$moveStatus.x,
+                y = _e$moveStatus.y;
+
+            this.swiperNode = __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.findDOMNode(this.refSwiper);
+            this.swiperNode.style.transform = ['translateX(' + x + 'px)'];
+            // preventDefault, avoid trigger scroll event when touch moving.
+            srcEvent.preventDefault();
+        }
+    }, {
+        key: 'resetSwiper',
+        value: function resetSwiper() {
+            this.swiperNode = __WEBPACK_IMPORTED_MODULE_6_react_dom___default.a.findDOMNode(this.refSwiper);
+            this.swiperNode.style.transform = ['translateX(0px)'];
+        }
+    }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
 
-            return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4_rc_gesture__["a" /* default */], { direction: "horizontal", enablePinch: true, enableRotate: true, onTap: this.log('onTap'), onPress: this.log('onPress'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['direction']), onSwipeLeft: this.log('onSwipeLeft', ['direction']), onSwipeRight: this.log('onSwipeRight', ['direction']), onSwipeUp: this.log('onSwipeUp', ['direction']), onSwipeDown: this.log('onSwipeDown', ['direction']), onPinch: this.log('onPinch', ['scale']), onPinchStart: this.log('onPinchStart', ['scale']), onPinchMove: this.log('onPinchMove', ['scale']), onPinchEnd: this.log('onPinchEnd', ['scale']), onPinchCancel: this.log('onPinchCancel', ['scale']), onPinchIn: this.log('onPinchIn', ['scale']), onPinchOut: this.log('onPinchOut', ['scale']), onRotate: this.log('onRotate', ['rotation']), onRotateStart: this.log('onRotateStart', ['rotation']), onRotateMove: this.log('onRotateMove', ['rotation']), onRotateEnd: this.log('onRotateEnd', ['rotation']), onRotateCancel: this.log('onRotateCancel', ['rotation']), onPan: this.log('onPan', ['moveStatus', 'direction']), onPanStart: this.log('onPanStart', ['moveStatus', 'direction']), onPanMove: this.log('onPanMove', ['moveStatus', 'direction']), onPanEnd: this.log('onPanEnd', ['moveStatus', 'direction']), onPanCancel: this.log('onPanCancel', ['moveStatus', 'direction']), onPanLeft: this.log('onPanLeft', ['moveStatus', 'direction']), onPanRight: this.log('onPanRight', ['moveStatus', 'direction']), onPanUp: this.log('onPanUp', ['moveStatus', 'direction']), onPanDown: this.log('onPanDown', ['moveStatus', 'direction']) }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "inner", ref: function ref(el) {
+            return __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", null, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("style", { dangerouslySetInnerHTML: { __html: style } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { ref: "log", style: { height: 100, overflow: 'auto', margin: 10 } }), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "outter" }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4_rc_gesture__["a" /* default */], { direction: "all", enablePinch: true, enableRotate: true, onTap: this.log('onTap'), onPress: this.log('onPress'), onPressUp: this.log('onPressUp'), onSwipe: this.log('onSwipe', ['direction']), onSwipeLeft: this.log('onSwipeLeft', ['direction']), onSwipeRight: this.log('onSwipeRight', ['direction']), onSwipeUp: this.log('onSwipeUp', ['direction']), onSwipeDown: this.log('onSwipeDown', ['direction']), onPinch: this.log('onPinch', ['scale']), onPinchStart: this.log('onPinchStart', ['scale']), onPinchMove: this.log('onPinchMove', ['scale']), onPinchEnd: this.log('onPinchEnd', ['scale']), onPinchCancel: this.log('onPinchCancel', ['scale']), onPinchIn: this.log('onPinchIn', ['scale']), onPinchOut: this.log('onPinchOut', ['scale']), onRotate: this.log('onRotate', ['rotation']), onRotateStart: this.log('onRotateStart', ['rotation']), onRotateMove: this.log('onRotateMove', ['rotation']), onRotateEnd: this.log('onRotateEnd', ['rotation']), onRotateCancel: this.log('onRotateCancel', ['rotation']), onPan: this.log('onPan', ['moveStatus', 'direction']), onPanStart: this.log('onPanStart', ['moveStatus', 'direction']), onPanMove: this.log('onPanMove', ['moveStatus', 'direction']), onPanEnd: this.log('onPanEnd', ['moveStatus', 'direction']), onPanCancel: this.log('onPanCancel', ['moveStatus', 'direction']), onPanLeft: this.log('onPanLeft', ['moveStatus', 'direction']), onPanRight: this.log('onPanRight', ['moveStatus', 'direction']), onPanUp: this.log('onPanUp', ['moveStatus', 'direction']), onPanDown: this.log('onPanDown', ['moveStatus', 'direction']) }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "inner", ref: function ref(el) {
                     _this2.root = el;
-                } }))));
+                } }))), __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "swiper-container" }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4_rc_gesture__["a" /* default */], { direction: "horizontal", onPanMove: function onPanMove(e, args) {
+                    _this2.moveSwiper(e, args);
+                }, onPanEnd: function onPanEnd() {
+                    _this2.resetSwiper();
+                }, onTouchMove: function onTouchMove(e) {
+                    console.log('still run touch move');
+                } }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { style: { height: 200, backgroundColor: 'red' } }, __WEBPACK_IMPORTED_MODULE_5_react___default.a.createElement("div", { className: "swiper", ref: function ref(e) {
+                    _this2.refSwiper = e;
+                } }, "This is simple swiper demo. Only allow horizontal direction and height=200px to test scroll event.")))));
         }
     }]);
 
@@ -10650,7 +10676,8 @@ var Gesture = function (_Component) {
                 /* copy for next time touch move cala convenient*/
                 time: startTime,
                 touches: startTouches,
-                mutliFingerStatus: startMutliFingerStatus
+                mutliFingerStatus: startMutliFingerStatus,
+                srcEvent: _this.event
             });
         };
         _this.checkIfMultiTouchStart = function () {
@@ -10738,7 +10765,9 @@ var Gesture = function (_Component) {
                 pan = _this$gesture2.pan,
                 touches = _this$gesture2.touches,
                 moveStatus = _this$gesture2.moveStatus,
-                preTouches = _this$gesture2.preTouches;
+                preTouches = _this$gesture2.preTouches,
+                _this$gesture2$availa = _this$gesture2.availablePan,
+                availablePan = _this$gesture2$availa === undefined ? true : _this$gesture2$availa;
 
             if (touches.length > 1) {
                 _this.setGestureState({
@@ -10748,19 +10777,26 @@ var Gesture = function (_Component) {
                 pan && _this.triggerCombineEvent('onPan', 'cancel');
                 return;
             }
-            if (moveStatus) {
+            // add avilablePan condition to fix the case in scrolling, which will cause unavailable pan move.
+            if (moveStatus && availablePan) {
+                var x = moveStatus.x,
+                    y = moveStatus.y;
+
                 var direction = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["f" /* getMovingDirection */])(preTouches[0], touches[0]);
-                _this.setGestureState({
-                    direction: direction
-                });
+                _this.setGestureState({ direction: direction });
                 var eventName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["g" /* getDirectionEventName */])(direction);
                 if (!_this.allowGesture()) {
+                    // if the first move is unavailable, then judge all of remaining touch movings are also invalid.
+                    if (!pan) {
+                        _this.setGestureState({ availablePan: false });
+                    }
                     return;
                 }
                 if (!pan) {
                     _this.triggerCombineEvent('onPan', 'start');
                     _this.setGestureState({
-                        pan: true
+                        pan: true,
+                        availablePan: true
                     });
                 } else {
                     _this.triggerCombineEvent('onPan', eventName);
