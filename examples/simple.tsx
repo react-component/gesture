@@ -150,6 +150,7 @@ class Demo extends Component<any, any> {
             direction="horizontal"
             onPanMove={ (e, args) => { this.moveSwiper(e, args); } }
             onPanEnd={ () => { this.resetSwiper(); } }
+            onTouchMove={ (e) => { console.log('still run touch move'); } }
           >
             <div style={{height: 200, backgroundColor: 'red'}}>
               <div className="swiper" ref={ (e) => { this.refSwiper = e; } }>
