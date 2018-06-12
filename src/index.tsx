@@ -1,5 +1,5 @@
 /* tslint:disable:no-console */
-import React, { Component } from 'react';
+import React, { Component, TouchEventHandler } from 'react';
 import {
   calcRotation,
   getEventName, now,
@@ -80,6 +80,12 @@ export interface IGesture {
   onSwipeRight?: GestureHandler;
   onSwipeUp?: GestureHandler;
   onSwipeDown?: GestureHandler;
+
+  // original dom element event handler
+  onTouchStart?: TouchEventHandler<HTMLElement>;
+  onTouchMove?: TouchEventHandler<HTMLElement>;
+  onTouchEnd?: TouchEventHandler<HTMLElement>;
+  onTouchCancel?: TouchEventHandler<HTMLElement>;
 };
 
 // http://hammerjs.github.io/api/#event-object
