@@ -10779,9 +10779,6 @@ var Gesture = function (_Component) {
             }
             // add avilablePan condition to fix the case in scrolling, which will cause unavailable pan move.
             if (moveStatus && availablePan) {
-                var x = moveStatus.x,
-                    y = moveStatus.y;
-
                 var direction = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["f" /* getMovingDirection */])(preTouches[0], touches[0]);
                 _this.setGestureState({ direction: direction });
                 var eventName = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_6__util__["g" /* getDirectionEventName */])(direction);
