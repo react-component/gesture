@@ -150,7 +150,7 @@ export default class Gesture extends Component<IGesture, any> {
 
   protected event: any;
 
-  private pressTimer: number;
+  private pressTimer: NodeJS.Timer;
 
   private directionSetting: number;
 
@@ -357,7 +357,6 @@ export default class Gesture extends Component<IGesture, any> {
 
     // add avilablePan condition to fix the case in scrolling, which will cause unavailable pan move.
     if (moveStatus && availablePan) {
-      const {x, y} = moveStatus;
       const direction = getMovingDirection(preTouches[0], touches[0]);
       this.setGestureState({direction});
 
