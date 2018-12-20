@@ -68,7 +68,7 @@
     "rc-tools": "^6.3.6",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",
-    "react-test-renderer": "^15.5.4"
+    "react-test-renderer": "^1.1.0"
   },
   "pre-commit": [
     "lint"
