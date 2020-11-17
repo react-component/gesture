@@ -14,7 +14,7 @@ export function now() {
   return Date.now();
 }
 
-export function calcMutliFingerStatus(touches) {
+export function calcMultiFingerStatus(touches) {
   if (touches.length < 2) {
     return;
   }
@@ -45,9 +45,9 @@ export function calcMoveStatus(startTouches, touches, time) {
     angle: _calcAngle(deltaX, deltaY),
   };
 }
-export function calcRotation(startMutliFingerStatus, mutliFingerStatus) {
-  const { angle: startAngle } = startMutliFingerStatus;
-  const { angle } = mutliFingerStatus;
+export function calcRotation(startMultiFingerStatus, multiFingerStatus) {
+  const { angle: startAngle } = startMultiFingerStatus;
+  const { angle } = multiFingerStatus;
 
   return angle - startAngle;
 }

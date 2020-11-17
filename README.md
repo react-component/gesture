@@ -25,10 +25,7 @@ Support gesture for react component, inspired by [hammer.js](https://github.com/
 
 ## Screenshots
 
-
 ## Features
-
-
 
 ## Install
 
@@ -55,7 +52,7 @@ container);
 
 ## API
 
-all callback funtion will have one parammeter: `type GestureHandler = (s: IGestureStatus) => void;`
+all callback function will have one parameter: `type GestureHandler = (s: IGestureStatus) => void;`
 
 - gesture: the rc-gesture state object, which contain all information you may need, see [gesture](#gesture)
 
@@ -282,7 +279,6 @@ pinch gesture is not enabled by default, you must set `props.enablePinch = true`
     </tbody>
 </table>
 
-
 #### Rotate
 
 pinch gesture is not enabled by default, you must set `props.enableRotate = true` at first;
@@ -334,18 +330,18 @@ pinch gesture is not enabled by default, you must set `props.enableRotate = true
 
 ```tsx
 // http://hammerjs.github.io/api/#event-object
-export interface IGestureStauts {
+export interface IGestureStatus {
     /* start status snapshot */
     startTime: number;
     startTouches: Finger[];
 
-    startMutliFingerStatus?: MultiFingerStatus[];
+    startMultiFingerStatus?: MultiFingerStatus[];
 
     /* now status snapshot */
     time: number;
     touches: Finger[];
 
-    mutliFingerStatus?: MultiFingerStatus[];
+    multiFingerStatus?: MultiFingerStatus[];
 
     /* delta status from touchstart to now, just for singe finger */
     moveStatus?: SingeFingerMoveStatus;
@@ -369,7 +365,7 @@ export interface IGestureStauts {
 
 ## Development
 
-```
+```bash
 npm install
 npm start
 ```
