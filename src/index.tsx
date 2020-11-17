@@ -3,7 +3,7 @@ import React, { Component, TouchEventHandler } from 'react';
 import {
   calcRotation,
   getEventName, now,
-  calcMutliFingerStatus, calcMoveStatus,
+  calcMultiFingerStatus, calcMoveStatus,
   shouldTriggerSwipe, shouldTriggerDirection,
   getMovingDirection, getDirectionEventName,
 } from './util';
@@ -94,14 +94,14 @@ export interface IGestureStatus {
   startTime: number;
   startTouches: Finger[];
 
-  startMutliFingerStatus?: MultiFingerStatus[];
+  startMultiFingerStatus?: MultiFingerStatus[];
 
   /* now status snapshot */
   time: number;
   touches: Finger[];
   preTouches: Finger[];
 
-  mutliFingerStatus?: MultiFingerStatus[];
+  multiFingerStatus?: MultiFingerStatus[];
 
   /* delta status from touchstart to now, just for singe finger */
   moveStatus?: SingeFingerMoveStatus;
@@ -256,15 +256,15 @@ export default class Gesture extends Component<IGesture, any> {
     // store the gesture start state
     const startTouches = this.getTouches(e);
     const startTime = now();
-    const startMutliFingerStatus = calcMutliFingerStatus(startTouches);
+    const startMultiFingerStatus = calcMultiFingerStatus(startTouches);
     this.setGestureState({
       startTime,
       startTouches,
-      startMutliFingerStatus,
-      /* copy for next time touch move cala convenient*/
+      startMultiFingerStatus,
+      /* copy for next time touch move calc convenient*/
       time: startTime,
       touches: startTouches,
-      mutliFingerStatus: startMutliFingerStatus,
+      multiFingerStatus: startMultiFingerStatus,
       srcEvent: this.event,
     });
   }
@@ -274,9 +274,9 @@ export default class Gesture extends Component<IGesture, any> {
     const { touches } = this.gesture;
     if (touches.length > 1 && (enablePinch || enableRotate)) {
       if (enablePinch) {
-        const startMutliFingerStatus = calcMutliFingerStatus(touches);
+        const startMultiFingerStatus = calcMultiFingerStatus(touches);
         this.setGestureState({
-          startMutliFingerStatus,
+          startMultiFingerStatus,
 
           /* init pinch status */
           pinch: true,
@@ -299,7 +299,7 @@ export default class Gesture extends Component<IGesture, any> {
     this.event = e;
     if (!this.gesture) {
       // sometimes weird happen: touchstart -> touchmove..touchmove.. --> touchend --> touchmove --> touchend
-      // so we need to skip the unnormal event cycle after touchend
+      // so we need to skip the invalid event cycle after touchend
       return;
     }
 
@@ -311,7 +311,7 @@ export default class Gesture extends Component<IGesture, any> {
     this.checkIfMultiTouchMove();
   }
   checkIfMultiTouchMove = () => {
-    const { pinch, rotate, touches, startMutliFingerStatus, mutliFingerStatus } = this.gesture as any;
+    const { pinch, rotate, touches, startMultiFingerStatus, multiFingerStatus } = this.gesture as any;
     if (!pinch && !rotate) {
       return;
     }
@@ -327,14 +327,14 @@ export default class Gesture extends Component<IGesture, any> {
     }
 
     if (pinch) {
-      const scale = mutliFingerStatus.z / startMutliFingerStatus.z;
+      const scale = multiFingerStatus.z / startMultiFingerStatus.z;
       this.setGestureState({
         scale,
       });
       this.triggerPinchEvent('onPinch', 'move');
     }
     if (rotate) {
-      const rotation = calcRotation(startMutliFingerStatus, mutliFingerStatus);
+      const rotation = calcRotation(startMultiFingerStatus, multiFingerStatus);
       this.setGestureState({
         rotation,
       });
@@ -355,7 +355,7 @@ export default class Gesture extends Component<IGesture, any> {
       return;
     }
 
-    // add avilablePan condition to fix the case in scrolling, which will cause unavailable pan move.
+    // add availablePan condition to fix the case in scrolling, which will cause unavailable pan move.
     if (moveStatus && availablePan) {
       const direction = getMovingDirection(preTouches[0], touches[0]);
       this.setGestureState({direction});
@@ -400,15 +400,15 @@ export default class Gesture extends Component<IGesture, any> {
     const { startTime, startTouches, pinch, rotate } = this.gesture;
     const touches = this.getTouches(e);
     const moveStatus = calcMoveStatus(startTouches, touches, time - startTime);
-    let mutliFingerStatus;
+    let multiFingerStatus;
     if (pinch || rotate) {
-      mutliFingerStatus = calcMutliFingerStatus(touches);
+      multiFingerStatus = calcMultiFingerStatus(touches);
     }
 
     this.setGestureState({
       /* update status snapshot */
       touches,
-      mutliFingerStatus,
+      multiFingerStatus,
       /* update duration status */
       moveStatus,
 
